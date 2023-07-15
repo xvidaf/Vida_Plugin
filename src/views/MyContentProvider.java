@@ -1,15 +1,14 @@
 package views;
 
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
 
+import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import models.MyObject;
 import models.Project;
 import models.RootManager;
 
 public class MyContentProvider implements ITreeContentProvider {
-
     @Override
     public Object[] getElements(Object inputElement) {
         // Return the root elements of your object hierarchy
@@ -76,6 +75,5 @@ public class MyContentProvider implements ITreeContentProvider {
         // If your objects have a reference to their parent, you can return it here
         return null;
     }
-    
-
+   
 }

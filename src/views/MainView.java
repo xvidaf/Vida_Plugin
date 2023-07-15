@@ -1,11 +1,19 @@
 package views;
 
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Menu;
 
+import actions.CreateObject;
+import actions.CreateProject;
 import models.MyObject;
 import models.Project;
 import models.RootManager;
@@ -13,6 +21,8 @@ import models.RootManager;
 public class MainView extends org.eclipse.ui.part.ViewPart{
 	
 	private TreeViewer treeViewer;
+	// Keeps track of what we hover, for context menu
+	Object hoveredElement;
 
 	@Override
     public void createPartControl(Composite parent) {
@@ -33,13 +43,35 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         // For example:
         // MainView.setAutoExpandLevel(2);
         // MainView.setInput(...);
-
+        
+        
         // Set the MainView as the control for the view
         this.setPartName("My Custom View");
         //this.setTitleImage(Activator.getImageDescriptor("path/to/icon.png").createImage());
         
         //Old, did not seem to work
         //this.setPartControl(container);
+        
+        MenuManager menuManager = new MenuManager();
+        Menu menu = menuManager.createContextMenu(treeViewer.getControl());
+        treeViewer.getControl().setMenu(menu);
+        
+        // Register the MenuManager with the view site
+        getSite().registerContextMenu(menuManager, treeViewer);
+        
+        CreateProject createProject = new CreateProject(treeViewer);
+
+        
+        CreateObject createObject = new CreateObject(treeViewer);
+
+        
+        menuManager.setRemoveAllWhenShown(true);
+        
+        menuManager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuManager) {
+				fillContextMenu(menuManager, createProject, createObject);
+			}
+		});
         
         treeViewer.setInput(getInitialInput());
         getSite().setSelectionProvider(treeViewer);
@@ -50,6 +82,22 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         // Set focus to the MainView or any other control that requires focus
     	treeViewer.getControl().setFocus();
     }
+    
+	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject) {
+		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+        Object selectedElement = selection.getFirstElement();
+        
+        if(selectedElement instanceof Project) {
+            MenuManager newMenuManager = new MenuManager("New");
+            menuManager.add(newMenuManager);
+            newMenuManager.add(createObject);
+        } else if (selectedElement instanceof MyObject) {
+            MenuManager newMenuManager = new MenuManager("New");
+            menuManager.add(newMenuManager);
+            newMenuManager.add(createObject);
+        }
+        menuManager.add(createProject);
+	}
     
     private Object getInitialInput() {
     	
@@ -71,6 +119,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         return RootManager.getInstance();
         //return rootProject;
     }
+    
     
 
 }
