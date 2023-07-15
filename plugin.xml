@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         id="1"
+         name="MainView"
+         point="org.eclipse.ui.views">
+      <view
+            class="views.MainView"
+            id="Vida_Plugin.view1"
+            name="ADDASCO Expanded"
+            restorable="true">
+      </view>
+   </extension>
+
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="org.eclipse.e4.ui.workbench.swt.E4Application"
+            name="vida_plugin">
+         <property
+               name="applicationCSS"
+               value="platform:/plugin/Vida_Plugin/css/default.css">
+         </property>
+      </product>
+   </extension>
+
+</plugin>
