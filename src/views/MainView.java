@@ -8,12 +8,19 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DragSource;
+import org.eclipse.swt.dnd.DropTarget;
+import org.eclipse.swt.dnd.TextTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 
 import actions.CreateObject;
 import actions.CreateProject;
+import models.DragSourceListenerAdapter;
+import models.DropSourceListenerAdapter;
 import models.MyObject;
 import models.Project;
 import models.RootManager;
@@ -42,6 +49,17 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         //this.setTitleImage(Activator.getImageDescriptor("path/to/icon.png").createImage());
         
         createContextMenu();
+        
+        DragSource dragSource = new DragSource(treeViewer.getControl(), DND.DROP_MOVE);
+        dragSource.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+        dragSource.addDragListener(new DragSourceListenerAdapter(this.treeViewer));
+        
+        DropTarget target = new DropTarget(treeViewer.getControl(), DND.DROP_MOVE);
+        target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
+        target.addDropListener(new DropSourceListenerAdapter(this.treeViewer));
+        
+        
+        
        
         treeViewer.setInput(getInitialInput());
         getSite().setSelectionProvider(treeViewer);
@@ -108,6 +126,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         return RootManager.getInstance();
         //return rootProject;
     }
+
     
     
 

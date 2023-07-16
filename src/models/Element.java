@@ -2,7 +2,8 @@ package models;
 
 import java.util.ArrayList;
 
-public class Element {
+
+public class Element{
     private String name;
     protected Element parent;
     private ArrayList<Element> children;
@@ -23,8 +24,21 @@ public class Element {
 		return parent;
 	}
 	
+	public void setParent(Element parent) {
+		this.parent = parent;
+	}
+	
     public void addChild(Element child) {
-        children.add(child);
+    	if(RootManager.getInstance().addChildToList(child)) {
+    		 children.add(child);
+    		 child.setParent(this);
+    	}
+    }
+    
+    public void removeChild(Element child) {
+    	if(RootManager.getInstance().removeChildFromList(child)) {
+    		 children.remove(child);
+    	}
     }
 
     public ArrayList<Element> getChildren() {
