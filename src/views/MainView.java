@@ -21,8 +21,6 @@ import models.RootManager;
 public class MainView extends org.eclipse.ui.part.ViewPart{
 	
 	private TreeViewer treeViewer;
-	// Keeps track of what we hover, for context menu
-	Object hoveredElement;
 
 	@Override
     public void createPartControl(Composite parent) {
@@ -38,41 +36,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
 
         // Set the label provider
         treeViewer.setLabelProvider(new MyLabelProvider());
-
-        // Set any additional configuration options for the MainView
-        // For example:
-        // MainView.setAutoExpandLevel(2);
-        // MainView.setInput(...);
-        
         
         // Set the MainView as the control for the view
         this.setPartName("My Custom View");
         //this.setTitleImage(Activator.getImageDescriptor("path/to/icon.png").createImage());
         
-        //Old, did not seem to work
-        //this.setPartControl(container);
-        
-        MenuManager menuManager = new MenuManager();
-        Menu menu = menuManager.createContextMenu(treeViewer.getControl());
-        treeViewer.getControl().setMenu(menu);
-        
-        // Register the MenuManager with the view site
-        getSite().registerContextMenu(menuManager, treeViewer);
-        
-        CreateProject createProject = new CreateProject(treeViewer);
-
-        
-        CreateObject createObject = new CreateObject(treeViewer);
-
-        
-        menuManager.setRemoveAllWhenShown(true);
-        
-        menuManager.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject);
-			}
-		});
-        
+        createContextMenu();
+       
         treeViewer.setInput(getInitialInput());
         getSite().setSelectionProvider(treeViewer);
     }
@@ -97,6 +67,25 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
             newMenuManager.add(createObject);
         }
         menuManager.add(createProject);
+	}
+	
+	private void createContextMenu() {
+		MenuManager menuManager = new MenuManager();
+        Menu menu = menuManager.createContextMenu(treeViewer.getControl());
+        treeViewer.getControl().setMenu(menu);
+        
+        getSite().registerContextMenu(menuManager, treeViewer);
+        
+        CreateProject createProject = new CreateProject(treeViewer);
+        CreateObject createObject = new CreateObject(treeViewer);
+
+        menuManager.setRemoveAllWhenShown(true);
+        
+        menuManager.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager menuManager) {
+				fillContextMenu(menuManager, createProject, createObject);
+			}
+		});
 	}
     
     private Object getInitialInput() {

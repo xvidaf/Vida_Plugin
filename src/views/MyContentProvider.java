@@ -11,8 +11,6 @@ import models.RootManager;
 public class MyContentProvider implements ITreeContentProvider {
     @Override
     public Object[] getElements(Object inputElement) {
-        // Return the root elements of your object hierarchy
-        // For example, let's assume you have a list of dummy models
     	//ArrayList<MyObject> rootElements = createDummyModels();
         //return rootElements.toArray();
     	if (inputElement instanceof RootManager) {
@@ -33,8 +31,6 @@ public class MyContentProvider implements ITreeContentProvider {
 
     @Override
     public Object[] getChildren(Object parentElement) {
-        // Return the children of the given parent element
-        // For example, let's assume your MyObject class has a `getChildren` method
     	if (parentElement instanceof RootManager) {
     		RootManager myObject = (RootManager) parentElement;
             return myObject.getChildren().toArray();
@@ -52,8 +48,6 @@ public class MyContentProvider implements ITreeContentProvider {
 
     @Override
     public boolean hasChildren(Object element) {
-        // Return whether the given element has children
-        // For example, let's assume your MyObject class has a `hasChildren` method
     	if (element instanceof RootManager) {
     		RootManager myObject = (RootManager) element;
             return myObject.hasChildren();
@@ -71,8 +65,6 @@ public class MyContentProvider implements ITreeContentProvider {
 
     @Override
     public Object getParent(Object element) {
-        // Return the parent of the given element
-        // If your objects have a reference to their parent, you can return it here
         return null;
     }
    
