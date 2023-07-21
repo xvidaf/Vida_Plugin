@@ -3,6 +3,7 @@ package views;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
+import models.Element;
 import models.MyObject;
 import models.Project;
 
@@ -16,6 +17,10 @@ public class MyLabelProvider extends LabelProvider {
         }
         if (element instanceof Project) {
         	Project myObject = (Project) element;
+            return myObject.getName();
+        }
+        if (element instanceof Element) {
+        	Element myObject = (Element) element;
             return myObject.getName();
         }
         return super.getText(element);

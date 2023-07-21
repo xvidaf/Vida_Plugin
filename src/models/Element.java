@@ -7,15 +7,24 @@ public class Element{
     private String name;
     protected Element parent;
     private ArrayList<Element> children;
+    private int sortOrder;
     
     public Element() {
     	this.children = new ArrayList<>();
+    	this.sortOrder = 1000;
     }
     
     public Element(String name) {
     	this.name = name;
     	this.children = new ArrayList<>();
     }
+    
+    public Element(String name, int sortOrder) {
+    	this.name = name;
+    	this.children = new ArrayList<>();
+    	this.sortOrder = sortOrder;
+    }
+    
     public String getName() {
         return name;
     }
@@ -48,5 +57,9 @@ public class Element{
     public boolean hasChildren() {
         return !children.isEmpty();
     }
+
+	public int getSortOrder() {
+		return sortOrder;
+	}
 
 }

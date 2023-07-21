@@ -19,8 +19,11 @@ import org.eclipse.swt.widgets.Menu;
 
 import actions.CreateObject;
 import actions.CreateProject;
+import actions.RefreshTree;
 import models.DragSourceListenerAdapter;
 import models.DropSourceListenerAdapter;
+import models.Final;
+import models.Initial;
 import models.MyObject;
 import models.Project;
 import models.RootManager;
@@ -59,9 +62,10 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         target.addDropListener(new DropSourceListenerAdapter(this.treeViewer));
         
         
-        
-       
+        Sorter sorter = new Sorter();
+   
         treeViewer.setInput(getInitialInput());
+        treeViewer.setComparator(sorter);
         getSite().setSelectionProvider(treeViewer);
     }
 
@@ -71,7 +75,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
     	treeViewer.getControl().setFocus();
     }
     
-	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject) {
+	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
         Object selectedElement = selection.getFirstElement();
         
@@ -85,6 +89,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
             newMenuManager.add(createObject);
         }
         menuManager.add(createProject);
+        menuManager.add(refreshTree);
 	}
 	
 	private void createContextMenu() {
@@ -96,12 +101,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         
         CreateProject createProject = new CreateProject(treeViewer);
         CreateObject createObject = new CreateObject(treeViewer);
+        RefreshTree refreshTree = new RefreshTree(treeViewer);
 
         menuManager.setRemoveAllWhenShown(true);
         
         menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree);
 			}
 		});
 	}
@@ -120,8 +126,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         MyObject child21 = new MyObject("Child 2-1");
         root2.addChild(child21);
         
+        Initial initialNode = new Initial("I should be first");
+        Final finalNode = new Final("I should be last");
+        
         rootProject.addChild(root1);
         rootProject.addChild(root2);
+        rootProject.addChild(initialNode);
+        rootProject.addChild(finalNode);
         RootManager.getInstance().addChild(rootProject);
         return RootManager.getInstance();
         //return rootProject;
