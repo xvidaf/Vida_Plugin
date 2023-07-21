@@ -61,5 +61,14 @@ public class Element{
 	public int getSortOrder() {
 		return sortOrder;
 	}
+	
+	public ArrayList<Element> getAllChildren() {
+	    ArrayList<Element> allChildren = new ArrayList<Element>();
+	    for (Element child : this.getChildren()) {
+	    	allChildren.add(child);
+	    	allChildren.addAll(child.getAllChildren());
+	    }
+	    return allChildren;
+	}
 
 }

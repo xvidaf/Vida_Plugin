@@ -20,8 +20,10 @@ import org.eclipse.swt.widgets.Menu;
 import actions.CreateObject;
 import actions.CreateProject;
 import actions.RefreshTree;
+import actions.RemoveObject;
 import models.DragSourceListenerAdapter;
 import models.DropSourceListenerAdapter;
+import models.Element;
 import models.Final;
 import models.Initial;
 import models.MyObject;
@@ -75,7 +77,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
     	treeViewer.getControl().setFocus();
     }
     
-	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree) {
+	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree, Action removeObject) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
         Object selectedElement = selection.getFirstElement();
         
@@ -89,6 +91,9 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
             newMenuManager.add(createObject);
         }
         menuManager.add(createProject);
+        if(selectedElement instanceof Element) {
+        	menuManager.add(removeObject);
+        }
         menuManager.add(refreshTree);
 	}
 	
@@ -102,12 +107,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         CreateProject createProject = new CreateProject(treeViewer);
         CreateObject createObject = new CreateObject(treeViewer);
         RefreshTree refreshTree = new RefreshTree(treeViewer);
+        RemoveObject removeObject = new RemoveObject(treeViewer);
 
         menuManager.setRemoveAllWhenShown(true);
         
         menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject);
 			}
 		});
 	}

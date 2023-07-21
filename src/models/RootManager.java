@@ -1,5 +1,6 @@
 package models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RootManager extends Element{
@@ -37,6 +38,12 @@ public class RootManager extends Element{
     	}
     	this.allInstances.remove(child.getName());
     	return true;
+    }
+    
+    public void removeChildrenFromList(ArrayList<Element> children) {
+    	for(Element child : children) {
+    		this.removeChildFromList(child);
+    	}
     }
     
 }
