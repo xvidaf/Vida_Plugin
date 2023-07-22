@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import actions.CreateObject;
 import actions.CreateProject;
 import actions.RefreshTree;
-import actions.RemoveObject;
+import actions.DeleteObject;
 import models.DragSourceListenerAdapter;
 import models.DropSourceListenerAdapter;
 import models.Element;
@@ -107,7 +107,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         CreateProject createProject = new CreateProject(treeViewer);
         CreateObject createObject = new CreateObject(treeViewer);
         RefreshTree refreshTree = new RefreshTree(treeViewer);
-        RemoveObject removeObject = new RemoveObject(treeViewer);
+        DeleteObject removeObject = new DeleteObject(treeViewer);
 
         menuManager.setRemoveAllWhenShown(true);
         

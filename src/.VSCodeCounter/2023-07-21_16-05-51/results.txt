@@ -1,0 +1,43 @@
+Date : 2023-07-21 16:05:51
+Directory : c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src
+Total : 16 files,  498 codes, 27 comments, 161 blanks, all 686 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Java     |         16 |        498 |         27 |        161 |        686 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                                   | files      | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                      |         16 |        498 |         27 |        161 |        686 |
+| actions                                                                                |          4 |         81 |          2 |         37 |        120 |
+| models                                                                                 |          8 |        184 |          3 |         65 |        252 |
+| views                                                                                  |          4 |        233 |         22 |         59 |        314 |
++----------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++----------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                               | language | code       | comment    | blank      | total      |
++----------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\actions\CreateObject.java             | Java     |         24 |          0 |         11 |         35 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\actions\CreateProject.java            | Java     |         22 |          0 |         10 |         32 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\actions\RefreshTree.java              | Java     |         14 |          0 |          6 |         20 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\actions\RemoveObject.java             | Java     |         21 |          2 |         10 |         33 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\DragSourceListenerAdapter.java | Java     |         26 |          0 |         10 |         36 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\DropSourceListenerAdapter.java | Java     |         25 |          2 |          9 |         36 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\Element.java                   | Java     |         58 |          0 |         17 |         75 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\Final.java                     | Java     |          9 |          0 |          4 |         13 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\Initial.java                   | Java     |          9 |          0 |          5 |         14 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\MyObject.java                  | Java     |          9 |          0 |          6 |         15 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\Project.java                   | Java     |          9 |          0 |          4 |         13 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\models\RootManager.java               | Java     |         39 |          1 |         10 |         50 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\views\MainView.java                   | Java     |        108 |          8 |         35 |        151 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\views\MyContentProvider.java          | Java     |         59 |          3 |         10 |         72 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\views\MyLabelProvider.java            | Java     |         34 |         11 |          8 |         53 |
+| c:\Users\vidaf\eclipse-workspace\Vida_Plugin\src\views\Sorter.java                     | Java     |         32 |          0 |          6 |         38 |
+| Total                                                                                  |          |        498 |         27 |        161 |        686 |
++----------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
