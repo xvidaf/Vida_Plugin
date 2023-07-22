@@ -20,16 +20,16 @@ public class DropSourceListenerAdapter extends DropTargetAdapter{
     }
 
     public void drop(DropTargetEvent event) {
-    	//Urcite vieme origin
-    	//Treba ziskat ciel
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
         selectedElement = (Element) selection.getFirstElement();
         TreeItem targetInstanceToFind = (TreeItem) event.item;
-        Element targetInstance = RootManager.getInstance().findInstance(targetInstanceToFind.getText());
-        selectedElement.getParent().removeChild(selectedElement);
-        targetInstance.addChild(selectedElement);
-        treeViewer.refresh();
-        
-       
+        if (targetInstanceToFind != null) {
+            Element targetInstance = RootManager.getInstance().findInstance(targetInstanceToFind.getText());
+            if (selectedElement != targetInstance) {
+                selectedElement.getParent().removeChild(selectedElement);
+                targetInstance.addChild(selectedElement);
+                treeViewer.refresh();
+            }	
+        }
     }
 }

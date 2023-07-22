@@ -29,6 +29,13 @@ public class Element{
         return name;
     }
     
+    public void setName(String name) {
+    	//Have to remove the element from master list, since the name is key
+        RootManager.getInstance().removeChildFromList(this);
+        this.name = name;
+        RootManager.getInstance().addChildToList(this);
+    }
+    
 	public Element getParent() {
 		return parent;
 	}

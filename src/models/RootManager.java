@@ -46,4 +46,8 @@ public class RootManager extends Element{
     	}
     }
     
+    public HashMap<String, Element> getAllInstances() {
+    	return this.allInstances;
+    }
+    
 }

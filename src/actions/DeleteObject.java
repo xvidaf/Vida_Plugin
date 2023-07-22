@@ -4,6 +4,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.ui.PlatformUI;
 
 import models.Element;
 import models.Final;
@@ -38,15 +39,15 @@ public class DeleteObject extends Action{
     
     public boolean askForConfirmation(Element element) {
     	if (element instanceof Project) {
-    		return MessageDialog.openConfirm(null, "Delete", "Are you sure you want to delete the selected project ? \nNote that everything in the project will be deleted as well.");
+    		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected project ? \nNote that everything in the project will be deleted as well.");
     	} else if (element instanceof MyObject) {
-    		return MessageDialog.openConfirm(null, "Delete", "Are you sure you want to delete the selected object ? \nNote that any children will be deleted as well.");
+    		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected object ? \nNote that any children will be deleted as well.");
     	} else if (element instanceof Final) {
-    		return MessageDialog.openConfirm(null, "Delete", "Are you sure you want to delete the selected final node ? \nNote that any children will be deleted as well.");
+    		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected final node ? \nNote that any children will be deleted as well.");
     	} else if (element instanceof Initial) {
-    		return MessageDialog.openConfirm(null, "Delete", "Are you sure you want to delete the selected initial node ? \nNote that any children will be deleted as well.");
+    		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected initial node ? \nNote that any children will be deleted as well.");
     	}
-    	return MessageDialog.openConfirm(null, "Delete", "Are you sure you want to delete the selected element ? \nNote that any children will be deleted as well.");
+    	return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected element ? \nNote that any children will be deleted as well.");
     }
 
 }
