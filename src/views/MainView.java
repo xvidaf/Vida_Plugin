@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Menu;
 import actions.CreateObject;
 import actions.CreateProject;
 import actions.RefreshTree;
+import actions.RefreshOpenedProjects;
 import actions.DeleteObject;
 import actions.Properties;
 import models.DragSourceListenerAdapter;
@@ -78,7 +79,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
     	treeViewer.getControl().setFocus();
     }
     
-	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree, Action removeObject, Action properties) {
+	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree, Action removeObject, Action properties, Action test) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
         Object selectedElement = selection.getFirstElement();
         
@@ -97,6 +98,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         	menuManager.add(properties);
         }
         menuManager.add(refreshTree);
+        menuManager.add(test);
 	}
 	
 	private void createContextMenu() {
@@ -111,12 +113,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         RefreshTree refreshTree = new RefreshTree(treeViewer);
         DeleteObject removeObject = new DeleteObject(treeViewer);
         Properties properties = new Properties(treeViewer);
+        RefreshOpenedProjects test = new RefreshOpenedProjects();
 
         menuManager.setRemoveAllWhenShown(true);
         
         menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, test);
 			}
 		});
 	}
