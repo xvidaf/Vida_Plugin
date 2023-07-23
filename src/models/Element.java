@@ -77,5 +77,12 @@ public class Element{
 	    }
 	    return allChildren;
 	}
+	
+	public boolean isParentOf(Element element) {
+		if (this.children.contains(element)) {
+			return true;
+		}
+		return false;
+	}
 
 }

@@ -25,7 +25,8 @@ public class DropSourceListenerAdapter extends DropTargetAdapter{
         TreeItem targetInstanceToFind = (TreeItem) event.item;
         if (targetInstanceToFind != null) {
             Element targetInstance = RootManager.getInstance().findInstance(targetInstanceToFind.getText());
-            if (selectedElement != targetInstance) {
+            //Action not valid if the target and root object is the same, or if the target is the child of root
+            if (selectedElement != targetInstance && selectedElement.isParentOf(targetInstance) == false) {
                 selectedElement.getParent().removeChild(selectedElement);
                 targetInstance.addChild(selectedElement);
                 treeViewer.refresh();

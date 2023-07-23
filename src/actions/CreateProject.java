@@ -3,8 +3,8 @@ package actions;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import dialogs.CreateProjectDialog;
 import models.Element;
-import models.Project;
 import models.RootManager;
 
 public class CreateProject extends Action{
@@ -17,15 +17,14 @@ public class CreateProject extends Action{
     
     @Override
     public void run() {
-        Element newInstance = createNewInstance();
-
-        RootManager.getInstance().addChild(newInstance);
-        
-        treeViewer.refresh();
-    }
-
-    private Element createNewInstance() {
-    	return new Project("New Project");
+    	CreateProjectDialog createProject = new CreateProjectDialog();
+    	createProject.open();
+    	
+    	if(createProject.isCreated() != null) {
+    		Element newInstance = createProject.getCreatedElement();
+            RootManager.getInstance().addChild(newInstance);
+            treeViewer.refresh();
+    	}
     }
 
 }

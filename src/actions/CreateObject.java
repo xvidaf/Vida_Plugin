@@ -4,8 +4,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 
+import dialogs.CreateObjectDialog;
 import models.Element;
-import models.MyObject;
+import models.RootManager;
 
 public class CreateObject extends Action{
 	private TreeViewer treeViewer;
@@ -17,18 +18,18 @@ public class CreateObject extends Action{
     
     @Override
     public void run() {
-        Element newInstance = createNewInstance();
-        
-        IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-        Element selectedElement = (Element) selection.getFirstElement();
-        
-        selectedElement.addChild(newInstance);
-        
-        treeViewer.refresh();
+    	CreateObjectDialog createObjectDialog = new CreateObjectDialog();
+    	createObjectDialog.open();
+    	
+    	if(createObjectDialog.isCreated() != null) {
+    		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+            Element selectedElement = (Element) selection.getFirstElement();
+            
+    		Element newInstance = createObjectDialog.getCreatedElement();
+    		
+    		selectedElement.addChild(newInstance);
+            RootManager.getInstance().addChild(newInstance);
+            treeViewer.refresh();
+    	}
     }
-
-    private Element createNewInstance() {
-    	return new MyObject("New Object");
-    }
-
 }
