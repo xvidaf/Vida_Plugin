@@ -4,6 +4,7 @@ package views;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -65,11 +66,20 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
         target.addDropListener(new DropSourceListenerAdapter(this.treeViewer));
         
+        // Get the toolbar manager of the TreeViewer
+        IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
+
+        // Add your custom action to the toolbar manager
+        RefreshOpenedProjects refreshButton = new RefreshOpenedProjects();
+        toolbarManager.add(refreshButton);
+        
         
         Sorter sorter = new Sorter();
    
         treeViewer.setInput(getInitialInput());
         treeViewer.setComparator(sorter);
+        
+        refreshButton.run();
         getSite().setSelectionProvider(treeViewer);
     }
 
@@ -79,7 +89,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
     	treeViewer.getControl().setFocus();
     }
     
-	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree, Action removeObject, Action properties, Action test) {
+	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject, Action refreshTree, Action removeObject, Action properties) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
         Object selectedElement = selection.getFirstElement();
         
@@ -98,7 +108,6 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         	menuManager.add(properties);
         }
         menuManager.add(refreshTree);
-        menuManager.add(test);
 	}
 	
 	private void createContextMenu() {
@@ -113,13 +122,12 @@ public class MainView extends org.eclipse.ui.part.ViewPart{
         RefreshTree refreshTree = new RefreshTree(treeViewer);
         DeleteObject removeObject = new DeleteObject(treeViewer);
         Properties properties = new Properties(treeViewer);
-        RefreshOpenedProjects test = new RefreshOpenedProjects();
 
         menuManager.setRemoveAllWhenShown(true);
         
         menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, test);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties);
 			}
 		});
 	}

@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 import models.OpenedProjects;
 
@@ -26,6 +27,7 @@ public class RefreshOpenedProjects extends Action {
 
     public RefreshOpenedProjects() {
         super("Refresh Opened Projects");
+        this.setImageDescriptor(ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/refresh.png"))));
         this.javaProjects = new ArrayList<>();
         this.packages = new ArrayList<>();
         this.classes = new ArrayList<>();
