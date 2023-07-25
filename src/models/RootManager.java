@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class RootManager extends Element{
+
+	private static final long serialVersionUID = 6295187106619715998L;
+	
 	private static RootManager instance;
 	private HashMap<String, Element> allInstances;
 	
@@ -48,6 +51,10 @@ public class RootManager extends Element{
     
     public HashMap<String, Element> getAllInstances() {
     	return this.allInstances;
+    }
+    
+    public void replaceInstance(RootManager replacement) {
+    	instance = replacement;
     }
     
 }

@@ -1,10 +1,14 @@
 package models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 
-public class Element{
-    private String name;
+public class Element implements Serializable{
+
+	private static final long serialVersionUID = -2161167441824704445L;
+	
+	private String name;
     protected Element parent;
     private ArrayList<Element> children;
     private int sortOrder;

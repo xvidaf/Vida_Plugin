@@ -2,7 +2,9 @@ package models;
 
 public class Initial extends Element{
 	
-    public Initial(String name) {
+	private static final long serialVersionUID = -7881826205009268845L;
+
+	public Initial(String name) {
         super(name);
     }
     

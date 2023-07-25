@@ -2,7 +2,9 @@ package models;
 
 public class Project extends Element{
 	
-    public Project(String name) {
+	private static final long serialVersionUID = -2341052622334261515L;
+
+	public Project(String name) {
         super(name);
     }
     
