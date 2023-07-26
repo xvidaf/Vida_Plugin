@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -51,5 +52,56 @@ public class OpenedProjects {
 
 	public ArrayList<IMethod> getMethods() {
 		return methods;
+	}
+	
+	public IType findClassByFullyQualifiedName(String nameToFind) {
+        for(IType selectedClass : this.classes) {
+        	if(nameToFind.equals(selectedClass.getFullyQualifiedName())) {
+        		return selectedClass;
+        	}
+        }
+        return null;
+	}
+	
+	public IMethod findMethodByFullyQualifiedName(String methodToFind) {
+        for(IMethod selectedMethod : this.methods) {
+        	if(methodToFind.equals(getMethodFullName(selectedMethod))) {
+        		return selectedMethod;
+        	}
+        }
+        return null;
+	}
+	
+	public String getMethodFullName(IMethod iMethod)
+	{
+	    StringBuilder name = new StringBuilder();
+	    name.append(iMethod.getDeclaringType().getFullyQualifiedName());
+	    name.append(".");
+	    name.append(iMethod.getElementName());
+	    name.append("(");
+	
+	    String comma = "";
+	    for (String type : iMethod.getParameterTypes()) {
+	            name.append(comma);
+	            comma = ", ";
+	            name.append(type);
+	    }
+	    name.append(")");
+	
+	    return name.toString();
+	}
+	
+	//References cannot be serialized, have to be updated manually
+	public void refreshReferences() {
+		for (Map.Entry<String, Element> set : RootManager.getInstance().getAllInstances().entrySet()) {
+			if (set.getValue() instanceof models.Class) {
+				models.Class classToUpdate = (models.Class) set.getValue();
+				classToUpdate.updateReferencedClass();
+			} else if (set.getValue() instanceof models.Method) {
+				models.Method methodToUpdate = (models.Method) set.getValue();
+				methodToUpdate.updateReferencedClass();
+			}
+
+       }
 	}
 }

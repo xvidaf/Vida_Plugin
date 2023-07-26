@@ -88,12 +88,14 @@ public class CreateObjectDialog extends TitleAreaDialog{
     @Override
     protected void okPressed() {
     	//If we want to create an element with an existing name, we throw an error
-    	if(RootManager.getInstance().getAllInstances().containsKey(objectName.getText())) {
-    		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
-    	} else {
-    		this.createdObject = new MyObject(objectName.getText());
-        	this.created = true;
-            super.okPressed();	
+    	if(objectName.getText() != "") {
+        	if(RootManager.getInstance().getAllInstances().containsKey(objectName.getText())) {
+        		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
+        	} else {
+        		this.createdObject = new MyObject(objectName.getText());
+            	this.created = true;
+                super.okPressed();	
+        	}
     	}
     }
 

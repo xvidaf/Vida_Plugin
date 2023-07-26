@@ -26,18 +26,22 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
+import actions.CreateClass;
+import actions.CreateMethod;
 import actions.CreateObject;
 import actions.CreateProject;
 import actions.RefreshTree;
 import actions.RefreshOpenedProjects;
 import actions.DeleteObject;
 import actions.Properties;
+import models.DoubleClickListenerAdapter;
 import models.DragSourceListenerAdapter;
 import models.DropSourceListenerAdapter;
 import models.Element;
 import models.Final;
 import models.Initial;
 import models.MyObject;
+import models.OpenedProjects;
 import models.Project;
 import models.RootManager;
 
@@ -75,23 +79,26 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		DropTarget target = new DropTarget(treeViewer.getControl(), DND.DROP_MOVE);
 		target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		target.addDropListener(new DropSourceListenerAdapter(this.treeViewer));
+		
+		treeViewer.addDoubleClickListener(new DoubleClickListenerAdapter(this.treeViewer));
 
 		// Get the toolbar manager of the TreeViewer
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
 
 		// Add your custom action to the toolbar manager
-		RefreshOpenedProjects refreshButton = new RefreshOpenedProjects();
+		RefreshOpenedProjects refreshButton = new RefreshOpenedProjects(treeViewer);
 		toolbarManager.add(refreshButton);
 
 		Sorter sorter = new Sorter();
 
 		treeViewer.setComparator(sorter);
+		
+		refreshButton.run();
 
 		if (this.restoreState() == false) {
 			treeViewer.setInput(getInitialInput());
 		}
 
-		refreshButton.run();
 		getSite().setSelectionProvider(treeViewer);
 	}
 
@@ -128,6 +135,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			oInputStream.close();
 			RootManager.getInstance().replaceInstance(restored_root);
 			memento = null;
+			OpenedProjects.getInstance().refreshReferences();
 			treeViewer.setInput(RootManager.getInstance());
 			return true;
 		} catch (Exception ex) {
@@ -143,7 +151,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
-			Action refreshTree, Action removeObject, Action properties) {
+			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -155,6 +163,8 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
+			newMenuManager.add(createClass);
+			newMenuManager.add(createMethod);
 		}
 		menuManager.add(createProject);
 		if (selectedElement instanceof Element) {
@@ -176,12 +186,14 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		RefreshTree refreshTree = new RefreshTree(treeViewer);
 		DeleteObject removeObject = new DeleteObject(treeViewer);
 		Properties properties = new Properties(treeViewer);
+		CreateClass createClass = new CreateClass(treeViewer);
+		CreateMethod createMethod = new CreateMethod(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod);
 			}
 		});
 	}

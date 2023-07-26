@@ -88,12 +88,14 @@ public class CreateProjectDialog extends TitleAreaDialog{
     @Override
     protected void okPressed() {
     	//If we want to create an element with an existing name, we throw an error
-    	if(RootManager.getInstance().getAllInstances().containsKey(projectName.getText())) {
-    		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
-    	} else {
-    		this.createdProject = new Project(projectName.getText());
-        	this.created = true;
-            super.okPressed();	
+    	if(projectName.getText() != "") {
+        	if(RootManager.getInstance().getAllInstances().containsKey(projectName.getText())) {
+        		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
+        	} else {
+        		this.createdProject = new Project(projectName.getText());
+            	this.created = true;
+                super.okPressed();	
+        	}
     	}
     }
 

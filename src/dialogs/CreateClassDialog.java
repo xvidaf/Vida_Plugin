@@ -1,7 +1,6 @@
 package dialogs;
 
-
-
+import org.eclipse.jdt.core.IType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -10,31 +9,30 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-import models.Project;
+import models.OpenedProjects;
 import models.RootManager;
 
-public class ProjectDetail extends TitleAreaDialog {
-	private Text projectName;
-
-    private Project selectedProject;
+public class CreateClassDialog extends TitleAreaDialog{
+	private Combo selectClass;
+	private Boolean created;
+	private models.Class createdObject;
     
-    public ProjectDetail(Project selectedProject) {
+    public CreateClassDialog() {
         super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
-        this.selectedProject = selectedProject;
     }
 
     @Override
     public void create() {
         super.create();
-        setTitle("Project Details");
-        setMessage("You can change the values of the attributes of the selected element.\nConfirm the changes with the save button.", IMessageProvider.INFORMATION);
+        setTitle("Create a New Class Reference");
+        setMessage("You can specify which class you want to reference.\nNote that the class choices are taken from opened projects.\nConfirm the creation with the create button.", IMessageProvider.INFORMATION);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ProjectDetail extends TitleAreaDialog {
     {
       super.configureShell(newShell);
 
-      newShell.setText("Project Detail");
+      newShell.setText("Create new class reference");
     }
     
     @Override
@@ -63,7 +61,7 @@ public class ProjectDetail extends TitleAreaDialog {
      super.createButtonsForButtonBar(parent);
 
      Button ok = getButton(IDialogConstants.OK_ID);
-     ok.setText("Save");
+     ok.setText("Create");
      setButtonLayoutData(ok);
 
      Button cancel = getButton(IDialogConstants.CANCEL_ID);
@@ -73,15 +71,19 @@ public class ProjectDetail extends TitleAreaDialog {
 
     private void createProjectName(Composite container) {
         Label lbtProjectName = new Label(container, SWT.NONE);
-        lbtProjectName.setText("Project Name");
+        lbtProjectName.setText("Class to reference");
 
         GridData dataProjectName = new GridData();
         dataProjectName.grabExcessHorizontalSpace = true;
         dataProjectName.horizontalAlignment = GridData.FILL;
-
-        projectName = new Text(container, SWT.BORDER);
-        projectName.setLayoutData(dataProjectName);
-        projectName.setText(this.selectedProject.getName());
+        
+        selectClass = new Combo(container, SWT.BORDER | SWT.READ_ONLY);
+        selectClass.setLayoutData(dataProjectName);
+        
+        
+        for(IType selectedClass : OpenedProjects.getInstance().getClasses()) {
+        	selectClass.add(selectedClass.getFullyQualifiedName());
+        }
     }
 
     @Override
@@ -91,12 +93,24 @@ public class ProjectDetail extends TitleAreaDialog {
 
     @Override
     protected void okPressed() {
-    	//If we want to change the name of the Project, but the name already exists, we throw error
-    	if(selectedProject.getName() != projectName.getText() && RootManager.getInstance().getAllInstances().containsKey(projectName.getText()) && selectedProject.getName() != "") {
-    		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the project must be unique.");
-    	} else {
-            this.selectedProject.setName(projectName.getText());
-            super.okPressed();
+    	if(selectClass.getText() != "") {
+        	//If we want to create an element with an existing name, we throw an error
+        	if(RootManager.getInstance().getAllInstances().containsKey(selectClass.getText())) {
+        		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
+        	} else {
+        		IType createdClass = OpenedProjects.getInstance().findClassByFullyQualifiedName(selectClass.getText());
+        		this.createdObject = new models.Class(createdClass);
+            	this.created = true;
+                super.okPressed();	
+        	}
     	}
     }
+
+	public Boolean isCreated() {
+		return created;
+	}
+
+	public models.Class getCreatedElement() {
+		return createdObject;
+	}
 }

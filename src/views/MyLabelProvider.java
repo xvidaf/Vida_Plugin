@@ -19,6 +19,10 @@ public class MyLabelProvider extends LabelProvider {
         	Project myObject = (Project) element;
             return myObject.getName();
         }
+        if (element instanceof models.Class) {
+        	Element myObject = (Element) element;
+            return myObject.getName() + ".java";
+        }
         if (element instanceof Element) {
         	Element myObject = (Element) element;
             return myObject.getName();

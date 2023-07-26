@@ -90,7 +90,7 @@ public class ElementDetail extends TitleAreaDialog{
     @Override
     protected void okPressed() {
     	//If we want to change the name of the Element, but the name already exists, we throw error
-    	if(selectedElement.getName() != elementName.getText() && RootManager.getInstance().getAllInstances().containsKey(elementName.getText())) {
+    	if(selectedElement.getName() != elementName.getText() && RootManager.getInstance().getAllInstances().containsKey(elementName.getText()) && selectedElement.getName() != "") {
     		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
     	} else {
         	this.selectedElement.setName(elementName.getText());
