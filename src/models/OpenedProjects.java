@@ -54,6 +54,15 @@ public class OpenedProjects {
 		return methods;
 	}
 	
+	public IJavaProject findProjectByName(String nameToFind) {
+        for(IJavaProject selectedProject : this.projects) {
+        	if(nameToFind.equals(selectedProject.getElementName())) {
+        		return selectedProject;
+        	}
+        }
+        return null;
+	}
+	
 	public IType findClassByFullyQualifiedName(String nameToFind) {
         for(IType selectedClass : this.classes) {
         	if(nameToFind.equals(selectedClass.getFullyQualifiedName())) {

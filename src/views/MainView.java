@@ -2,10 +2,17 @@ package views;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.Base64;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -33,6 +40,7 @@ import actions.CreateProject;
 import actions.RefreshTree;
 import actions.RefreshOpenedProjects;
 import actions.DeleteObject;
+import actions.OpenSettings;
 import actions.Properties;
 import models.DoubleClickListenerAdapter;
 import models.DragSourceListenerAdapter;
@@ -44,6 +52,7 @@ import models.MyObject;
 import models.OpenedProjects;
 import models.Project;
 import models.RootManager;
+import models.Settings;
 
 public class MainView extends org.eclipse.ui.part.ViewPart {
 
@@ -85,9 +94,12 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		// Get the toolbar manager of the TreeViewer
 		IToolBarManager toolbarManager = getViewSite().getActionBars().getToolBarManager();
 
-		// Add your custom action to the toolbar manager
+		// Add action to the toolbar manager
 		RefreshOpenedProjects refreshButton = new RefreshOpenedProjects(treeViewer);
 		toolbarManager.add(refreshButton);
+		
+		OpenSettings openSettings = new OpenSettings();
+		toolbarManager.add(openSettings);
 
 		Sorter sorter = new Sorter();
 
@@ -104,13 +116,43 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 	public void saveState(IMemento memento) {
 		try {
+			//Save RootManager
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bos);
 			os.writeObject(RootManager.getInstance());
-			String serialized_patches1 = Base64.getEncoder().encodeToString(bos.toByteArray());
+			String serialized_root = Base64.getEncoder().encodeToString(bos.toByteArray());
+			
+			//Save settings
+			bos = new ByteArrayOutputStream();
+			os = new ObjectOutputStream(bos);
+			os.writeObject(Settings.getInstance());
+			String serialized_settings = Base64.getEncoder().encodeToString(bos.toByteArray());
+			
+			//close streams
 			os.close();
+			bos.close();
+			
+			memento.putString("RootManager", serialized_root);
+			memento.putString("Settings", serialized_settings);
+			memento.putString("SettingsProject", Settings.getInstance().getDesignatedMainProject().getElementName());
+			
+			
+			//Save rootmanager to a file, to ensure git compatability
+			//get object which represents the workspace  
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();  
 
-			memento.putString("RootManager", serialized_patches1);
+			//get location of workspace (java.io.File)  
+			File workspaceDirectory = workspace.getRoot().getLocation().toFile();
+			
+			if(Settings.getInstance().getDesignatedMainProject() != null) {
+				try (PrintWriter out = new PrintWriter(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state")) {
+					try (OutputStream stream = new FileOutputStream(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state")) {
+						os = new ObjectOutputStream(stream);
+						os.writeObject(RootManager.getInstance());
+					}
+				}
+			}
+			
 
 		} catch (Exception ex) {
 			memento = null;
@@ -128,14 +170,47 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		}
 
 		try {
+			//Restore RootManager
 			final byte[] data = Base64.getDecoder().decode(memento.getString("RootManager"));
 			ByteArrayInputStream bis = new ByteArrayInputStream(data);
 			ObjectInputStream oInputStream = new ObjectInputStream(bis);
-			RootManager restored_root = (RootManager) oInputStream.readObject();
-			oInputStream.close();
-			RootManager.getInstance().replaceInstance(restored_root);
-			memento = null;
+			RootManager restoredRoot = (RootManager) oInputStream.readObject();
+			RootManager.getInstance().replaceInstance(restoredRoot);
+			
 			OpenedProjects.getInstance().refreshReferences();
+			
+			//Restore Settings
+			final byte[] dataSettings = Base64.getDecoder().decode(memento.getString("Settings"));
+			bis = new ByteArrayInputStream(dataSettings);
+			oInputStream = new ObjectInputStream(bis);
+			Settings restoredSettings = (Settings) oInputStream.readObject();
+			Settings.getInstance().replaceInstance(restoredSettings);
+			//Restore designated project
+			Settings.getInstance().restoredesignatedMainProject(memento.getString("SettingsProject"));
+			
+			oInputStream.close();
+			bis.close();
+			memento = null;
+			
+			//If a state file exists, restore it
+			
+			//get object which represents the workspace  
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();  
+
+			//get location of workspace (java.io.File)  
+			File workspaceDirectory = workspace.getRoot().getLocation().toFile();
+			
+			if(Settings.getInstance().getDesignatedMainProject() != null) {
+				//If exists
+				if(new File(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state").isFile()) {
+					FileInputStream fi = new FileInputStream(new File(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state"));
+					oInputStream = new ObjectInputStream(fi);
+					RootManager restoredRootFromFile = (RootManager) oInputStream.readObject();
+					RootManager.getInstance().replaceInstance(restoredRootFromFile);
+
+				}
+			}
+			
 			treeViewer.setInput(RootManager.getInstance());
 			return true;
 		} catch (Exception ex) {
