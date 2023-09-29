@@ -40,6 +40,7 @@ import actions.CreateProject;
 import actions.RefreshTree;
 import actions.RefreshOpenedProjects;
 import actions.DeleteObject;
+import actions.ImportFromEA;
 import actions.OpenSettings;
 import actions.Properties;
 import models.DoubleClickListenerAdapter;
@@ -207,7 +208,6 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 					oInputStream = new ObjectInputStream(fi);
 					RootManager restoredRootFromFile = (RootManager) oInputStream.readObject();
 					RootManager.getInstance().replaceInstance(restoredRootFromFile);
-
 				}
 			}
 			
@@ -226,7 +226,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
-			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod) {
+			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod, Action importFromEa) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -234,6 +234,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
+			menuManager.add(importFromEa);
 		} else if (selectedElement instanceof MyObject) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
@@ -263,12 +264,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		Properties properties = new Properties(treeViewer);
 		CreateClass createClass = new CreateClass(treeViewer);
 		CreateMethod createMethod = new CreateMethod(treeViewer);
+		ImportFromEA importFromEa = new ImportFromEA(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod, importFromEa);
 			}
 		});
 	}

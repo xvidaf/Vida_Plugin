@@ -27,7 +27,6 @@ public class Method extends Element{
 	}
 	
 	public void updateReferencedClass() {
-		System.out.println(this.getName());
 		this.referencedMethod = OpenedProjects.getInstance().findMethodByFullyQualifiedName(this.getName());
 	}
 
