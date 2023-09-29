@@ -235,7 +235,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
 			menuManager.add(importFromEa);
-		} else if (selectedElement instanceof ActivityDiagram) {
+		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof Action) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);

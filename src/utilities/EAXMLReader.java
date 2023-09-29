@@ -18,6 +18,8 @@ import org.xml.sax.SAXException;
 
 import models.Action;
 import models.ActivityDiagram;
+import models.Final;
+import models.Initial;
 import models.Project;
 
 public class EAXMLReader {
@@ -33,17 +35,17 @@ public class EAXMLReader {
 	private HashMap<String, XmlObject> nodeMap;
 	private HashMap<String, String> classMap;
 	private HashMap<String, XmlObject> swimlaneMap;
-	
-	public EAXMLReader(Project activityDiagramViewObject, String path){
+
+	public EAXMLReader(Project activityDiagramViewObject, String path) {
 		fXmlFile = new File(path);
 		this.selectedProject = activityDiagramViewObject;
 		this.activityDiagram = new ActivityDiagram("importedAD");
 		this.selectedProject.addChild(activityDiagram);
 		this.activityDiagram.setParent(selectedProject);
 	}
-	
-	public void createStructure() throws ParserConfigurationException, SAXException, IOException{
-		if(fXmlFile.exists()){
+
+	public void createStructure() throws ParserConfigurationException, SAXException, IOException {
+		if (fXmlFile.exists()) {
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 			xmldoc = dBuilder.parse(fXmlFile);
@@ -54,11 +56,11 @@ public class EAXMLReader {
 			swimlaneMap = new HashMap<String, XmlObject>();
 			classMap = new HashMap<String, String>();
 			NodeList nList;
-			
+
 			nList = xmldoc.getElementsByTagName("uml:Model");
 			getADName(nList);
 			nList = xmldoc.getElementsByTagName("node");
-			craeteNodes(nList);
+			createNodes(nList);
 			nList = xmldoc.getElementsByTagName("source");
 			createClasses(nList);
 			nList = xmldoc.getElementsByTagName("group");
@@ -67,45 +69,49 @@ public class EAXMLReader {
 			detailedNodes(nList);
 
 			System.out.print(this.activityDiagram.getName());
-			
-			//createADElements();
+
+			this.createADElements();
+
+			// createADElements();
 		}
 	}
-	
-	private void getADName(NodeList nList){
+
+	private void getADName(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;		
+			Element eElement = (Element) nNode;
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				if(eElement.getElementsByTagName("packagedElement").item(0).getAttributes().getNamedItem("name") != null){
-					String name = eElement.getElementsByTagName("packagedElement").item(0).getAttributes().getNamedItem("name").getNodeValue();
+				if (eElement.getElementsByTagName("packagedElement").item(0).getAttributes()
+						.getNamedItem("name") != null) {
+					String name = eElement.getElementsByTagName("packagedElement").item(0).getAttributes()
+							.getNamedItem("name").getNodeValue();
 					this.activityDiagram.setName(name);
 				}
 			}
 		}
 	}
-		
-	private void craeteNodes(NodeList nList){
+
+	private void createNodes(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;		
+			Element eElement = (Element) nNode;
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				String id = eElement.getAttribute("xmi:id");
 				String type = eElement.getAttribute("xmi:type");
 				String name = eElement.getAttribute("name");
 				String desc = "";
-				if(type.contains("uml")){
+				if (type.contains("uml")) {
 					XmlObject xmlO = new XmlObject(id, type, name, desc, 0, "");
 					nodeMap.put(id, xmlO);
-				}   
+				}
 			}
 		}
 	}
-	
-	private void detailedNodes(NodeList nList){
+
+	private void detailedNodes(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;		
+			Element eElement = (Element) nNode;
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				String id = eElement.getAttribute("xmi:idref");
 				String type = eElement.getAttribute("xmi:type");
@@ -116,43 +122,50 @@ public class EAXMLReader {
 				int orderNum = 0;
 				HashMap<String, String> tags = new HashMap<String, String>();
 				List<String> classes = new ArrayList<String>();
-				
-				
-				if(type.contains("uml")){
-					if(eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("owner") != null){
-						String owner_id = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("owner").getNodeValue();
+
+				if (type.contains("uml")) {
+					if (eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("owner") != null) {
+						String owner_id = eElement.getElementsByTagName("model").item(0).getAttributes()
+								.getNamedItem("owner").getNodeValue();
 						owner = swimlaneMap.get(owner_id).getName();
 					}
-					if(eElement.getElementsByTagName("properties").item(0).getAttributes().getNamedItem("documentation") != null){
-						desc = eElement.getElementsByTagName("properties").item(0).getAttributes().getNamedItem("documentation").getNodeValue();
+					if (eElement.getElementsByTagName("properties").item(0).getAttributes()
+							.getNamedItem("documentation") != null) {
+						desc = eElement.getElementsByTagName("properties").item(0).getAttributes()
+								.getNamedItem("documentation").getNodeValue();
 					}
-					if(eElement.getElementsByTagName("tag").getLength() != 0){
-						for(int i = 0; i < eElement.getElementsByTagName("tag").getLength(); i++){
-							 String tagName = eElement.getElementsByTagName("tag").item(i).getAttributes().getNamedItem("name").getNodeValue();
-							 
-							 if(tagName.contains("Order num")){
-								 orderNum = Integer.parseInt(eElement.getElementsByTagName("tag").item(i).getAttributes().getNamedItem("value").getNodeValue());
-							 }
-							 else{
-								 tags.put(tagName, eElement.getElementsByTagName("tag").item(i).getAttributes().getNamedItem("value").getNodeValue());
-							 }
+					if (eElement.getElementsByTagName("tag").getLength() != 0) {
+						for (int i = 0; i < eElement.getElementsByTagName("tag").getLength(); i++) {
+							String tagName = eElement.getElementsByTagName("tag").item(i).getAttributes()
+									.getNamedItem("name").getNodeValue();
+
+							if (tagName.contains("Order num")) {
+								orderNum = Integer.parseInt(eElement.getElementsByTagName("tag").item(i).getAttributes()
+										.getNamedItem("value").getNodeValue());
+							} else {
+								tags.put(tagName, eElement.getElementsByTagName("tag").item(i).getAttributes()
+										.getNamedItem("value").getNodeValue());
+							}
 						}
 					}
-					
-					if((eElement.getElementsByTagName("Dependency") !=  null)){
-						for(int i = 0; i < eElement.getElementsByTagName("Dependency").getLength(); i++){
-							if(eElement.getElementsByTagName("Dependency").item(i).getAttributes().getNamedItem("start") != null){
-								className = eElement.getElementsByTagName("Dependency").item(i).getAttributes().getNamedItem("start").getNodeValue();
+
+					if ((eElement.getElementsByTagName("Dependency") != null)) {
+						for (int i = 0; i < eElement.getElementsByTagName("Dependency").getLength(); i++) {
+							if (eElement.getElementsByTagName("Dependency").item(i).getAttributes()
+									.getNamedItem("start") != null) {
+								className = eElement.getElementsByTagName("Dependency").item(i).getAttributes()
+										.getNamedItem("start").getNodeValue();
 								classes.add(classMap.get(className));
 							}
 						}
 					}
-					
-					if(nodeMap.containsKey(id)){
-						XmlObject xmlO = new XmlObject(id, nodeMap.get(id).getType(), name, desc, orderNum, owner, tags, classes);
+
+					if (nodeMap.containsKey(id)) {
+						XmlObject xmlO = new XmlObject(id, nodeMap.get(id).getType(), name, desc, orderNum, owner, tags,
+								classes);
 						nodeMap.put(id, xmlO);
 					}
-					if(type.contains("uml:Object")){
+					if (type.contains("uml:Object")) {
 						XmlObject xmlO = new XmlObject(id, "object", name, desc, orderNum, owner, tags, classes);
 						nodeMap.put(id, xmlO);
 					}
@@ -161,44 +174,44 @@ public class EAXMLReader {
 		}
 	}
 
-	
-	private void createClasses(NodeList nList){
+	private void createClasses(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;		
+			Element eElement = (Element) nNode;
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				String id = eElement.getAttribute("xmi:idref");
-				String type = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("type").getNodeValue();
-				if(type.contains("Class")){
-					String name = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("name").getNodeValue();
+				String type = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("type")
+						.getNodeValue();
+				if (type.contains("Class")) {
+					String name = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("name")
+							.getNodeValue();
 					classMap.put(id, name);
 				}
 			}
 		}
 	}
-	
-	
+
 	private void createSwimLanes(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;		
+			Element eElement = (Element) nNode;
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				String id = eElement.getAttribute("xmi:id");
 				String type = eElement.getAttribute("xmi:type");
 				String name = eElement.getAttribute("name");
 				String desc = "";
-				if(type.contains("uml")){
+				if (type.contains("uml")) {
 					XmlObject xmlO = new XmlObject(id, type, name, desc, 0, "");
 					swimlaneMap.put(id, xmlO);
-				}   
+				}
 			}
 		}
 	}
-	
-	private void createEdges(NodeList nList){
+
+	private void createEdges(NodeList nList) {
 		for (int temp = 0; temp < nList.getLength(); temp++) {
 			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;		
+			Element eElement = (Element) nNode;
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 				String id = eElement.getAttribute("xmi:id");
 				String type = eElement.getAttribute("xmi:type");
@@ -207,9 +220,21 @@ public class EAXMLReader {
 
 				XmlObject xmlO = new XmlObject(id, type, source, target);
 				edgeList.add(xmlO);
-				if(xmlO.getSourceID().contains(initNode.getObjectID())){
+				if (xmlO.getSourceID().contains(initNode.getObjectID())) {
 					initEdge = xmlO;
 				}
+			}
+		}
+	}
+
+	private void createADElements() {
+		for (XmlObject xmls : nodeMap.values()) {
+			if (xmls.getType().equals("action")) {
+				this.activityDiagram.addChild(new Action(xmls.getName()));
+			} else if (xmls.getType().equals("initial node")) {
+				this.activityDiagram.addChild(new Initial(xmls.getName()));
+			} else if (xmls.getType().equals("final node")) {
+				this.activityDiagram.addChild(new Final(xmls.getName()));
 			}
 		}
 	}
