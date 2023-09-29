@@ -61,18 +61,12 @@ public class EAXMLReader {
 			getADName(nList);
 			nList = xmldoc.getElementsByTagName("node");
 			createNodes(nList);
-			nList = xmldoc.getElementsByTagName("source");
-			createClasses(nList);
-			nList = xmldoc.getElementsByTagName("group");
-			createSwimLanes(nList);
 			nList = xmldoc.getElementsByTagName("element");
 			detailedNodes(nList);
-
+			
 			System.out.print(this.activityDiagram.getName());
 
 			this.createADElements();
-
-			// createADElements();
 		}
 	}
 
@@ -173,60 +167,7 @@ public class EAXMLReader {
 			}
 		}
 	}
-
-	private void createClasses(NodeList nList) {
-		for (int temp = 0; temp < nList.getLength(); temp++) {
-			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;
-			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				String id = eElement.getAttribute("xmi:idref");
-				String type = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("type")
-						.getNodeValue();
-				if (type.contains("Class")) {
-					String name = eElement.getElementsByTagName("model").item(0).getAttributes().getNamedItem("name")
-							.getNodeValue();
-					classMap.put(id, name);
-				}
-			}
-		}
-	}
-
-	private void createSwimLanes(NodeList nList) {
-		for (int temp = 0; temp < nList.getLength(); temp++) {
-			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;
-			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				String id = eElement.getAttribute("xmi:id");
-				String type = eElement.getAttribute("xmi:type");
-				String name = eElement.getAttribute("name");
-				String desc = "";
-				if (type.contains("uml")) {
-					XmlObject xmlO = new XmlObject(id, type, name, desc, 0, "");
-					swimlaneMap.put(id, xmlO);
-				}
-			}
-		}
-	}
-
-	private void createEdges(NodeList nList) {
-		for (int temp = 0; temp < nList.getLength(); temp++) {
-			Node nNode = nList.item(temp);
-			Element eElement = (Element) nNode;
-			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
-				String id = eElement.getAttribute("xmi:id");
-				String type = eElement.getAttribute("xmi:type");
-				String source = eElement.getAttribute("source");
-				String target = eElement.getAttribute("target");
-
-				XmlObject xmlO = new XmlObject(id, type, source, target);
-				edgeList.add(xmlO);
-				if (xmlO.getSourceID().contains(initNode.getObjectID())) {
-					initEdge = xmlO;
-				}
-			}
-		}
-	}
-
+	
 	private void createADElements() {
 		for (XmlObject xmls : nodeMap.values()) {
 			if (xmls.getType().equals("action")) {
