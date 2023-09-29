@@ -15,13 +15,13 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-import models.MyObject;
+import models.ActivityDiagram;
 import models.RootManager;
 
 public class CreateObjectDialog extends TitleAreaDialog{
 	private Text objectName;
 	private Boolean created;
-	private MyObject createdObject;
+	private ActivityDiagram createdObject;
     
     public CreateObjectDialog() {
         super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
@@ -92,7 +92,7 @@ public class CreateObjectDialog extends TitleAreaDialog{
         	if(RootManager.getInstance().getAllInstances().containsKey(objectName.getText())) {
         		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
         	} else {
-        		this.createdObject = new MyObject(objectName.getText());
+        		this.createdObject = new ActivityDiagram(objectName.getText());
             	this.created = true;
                 super.okPressed();	
         	}
@@ -103,7 +103,7 @@ public class CreateObjectDialog extends TitleAreaDialog{
 		return created;
 	}
 
-	public MyObject getCreatedElement() {
+	public ActivityDiagram getCreatedElement() {
 		return createdObject;
 	}
 

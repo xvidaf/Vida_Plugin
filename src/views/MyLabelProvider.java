@@ -4,15 +4,15 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
 import models.Element;
-import models.MyObject;
+import models.ActivityDiagram;
 import models.Project;
 
 public class MyLabelProvider extends LabelProvider {
 
 	@Override
     public String getText(Object element) {
-        if (element instanceof MyObject) {
-            MyObject myObject = (MyObject) element;
+        if (element instanceof ActivityDiagram) {
+            ActivityDiagram myObject = (ActivityDiagram) element;
             return myObject.getName();
         }
         if (element instanceof Project) {
@@ -34,13 +34,13 @@ public class MyLabelProvider extends LabelProvider {
     public Image getImage(Object element) {
         // Return the image for the given element
         // You can use different icons based on the object type or other criteria
-        if (element instanceof MyObject) {
-            return getImageForMyObject((MyObject) element);
+        if (element instanceof ActivityDiagram) {
+            return getImageForMyObject((ActivityDiagram) element);
         }
         return super.getImage(element);
     }
 
-    private Image getImageForMyObject(MyObject myObject) {
+    private Image getImageForMyObject(ActivityDiagram myObject) {
         // Logic to determine the appropriate image based on the MyObject instance
         // You can use image descriptors or create images from files
         // For example, if you have different icons for different object types:

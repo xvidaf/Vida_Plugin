@@ -9,7 +9,7 @@ import org.eclipse.ui.PlatformUI;
 import models.Element;
 import models.Final;
 import models.Initial;
-import models.MyObject;
+import models.ActivityDiagram;
 import models.Project;
 import models.RootManager;
 
@@ -40,7 +40,7 @@ public class DeleteObject extends Action{
     public boolean askForConfirmation(Element element) {
     	if (element instanceof Project) {
     		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected project ? \nNote that everything in the project will be deleted as well.");
-    	} else if (element instanceof MyObject) {
+    	} else if (element instanceof ActivityDiagram) {
     		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected object ? \nNote that any children will be deleted as well.");
     	} else if (element instanceof Final) {
     		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Delete", "Are you sure you want to delete the selected final node ? \nNote that any children will be deleted as well.");

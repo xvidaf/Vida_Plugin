@@ -49,7 +49,7 @@ import models.DropSourceListenerAdapter;
 import models.Element;
 import models.Final;
 import models.Initial;
-import models.MyObject;
+import models.ActivityDiagram;
 import models.OpenedProjects;
 import models.Project;
 import models.RootManager;
@@ -235,7 +235,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
 			menuManager.add(importFromEa);
-		} else if (selectedElement instanceof MyObject) {
+		} else if (selectedElement instanceof ActivityDiagram) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
@@ -279,14 +279,14 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 		Project rootProject = new Project("Project 1");
 
-		MyObject root1 = new MyObject("Root 1");
-		MyObject child11 = new MyObject("Child 1-1");
-		MyObject child12 = new MyObject("Child 1-2");
+		ActivityDiagram root1 = new ActivityDiagram("Root 1");
+		ActivityDiagram child11 = new ActivityDiagram("Child 1-1");
+		ActivityDiagram child12 = new ActivityDiagram("Child 1-2");
 		root1.addChild(child11);
 		root1.addChild(child12);
 
-		MyObject root2 = new MyObject("Root 2");
-		MyObject child21 = new MyObject("Child 2-1");
+		ActivityDiagram root2 = new ActivityDiagram("Root 2");
+		ActivityDiagram child21 = new ActivityDiagram("Child 2-1");
 		root2.addChild(child21);
 
 		Initial initialNode = new Initial("I should be first");

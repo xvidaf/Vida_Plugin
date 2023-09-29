@@ -1,15 +1,15 @@
 package models;
 
 
-public class MyObject extends Element{
+public class ActivityDiagram extends Element{
 
 	private static final long serialVersionUID = 1292883764307783061L;
 
-	public MyObject(String name) {
+	public ActivityDiagram(String name) {
         super(name);
     }
     
-    public MyObject(String name, int sortOrder) {
+    public ActivityDiagram(String name, int sortOrder) {
         super(name, sortOrder);
     }
   

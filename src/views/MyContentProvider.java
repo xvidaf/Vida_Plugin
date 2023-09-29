@@ -4,7 +4,7 @@ package views;
 
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
-import models.MyObject;
+import models.ActivityDiagram;
 import models.Project;
 import models.RootManager;
 
@@ -21,8 +21,8 @@ public class MyContentProvider implements ITreeContentProvider {
             Project myObject = (Project) inputElement;
             return myObject.getChildren().toArray();
         }
-    	if (inputElement instanceof MyObject) {
-            MyObject myObject = (MyObject) inputElement;
+    	if (inputElement instanceof ActivityDiagram) {
+            ActivityDiagram myObject = (ActivityDiagram) inputElement;
             return myObject.getChildren().toArray();
         }
         return new Object[0];
@@ -35,8 +35,8 @@ public class MyContentProvider implements ITreeContentProvider {
     		RootManager myObject = (RootManager) parentElement;
             return myObject.getChildren().toArray();
         }
-        if (parentElement instanceof MyObject) {
-            MyObject myObject = (MyObject) parentElement;
+        if (parentElement instanceof ActivityDiagram) {
+            ActivityDiagram myObject = (ActivityDiagram) parentElement;
             return myObject.getChildren().toArray();
         }
     	if (parentElement instanceof Project) {
@@ -52,8 +52,8 @@ public class MyContentProvider implements ITreeContentProvider {
     		RootManager myObject = (RootManager) element;
             return myObject.hasChildren();
         }
-        if (element instanceof MyObject) {
-            MyObject myObject = (MyObject) element;
+        if (element instanceof ActivityDiagram) {
+            ActivityDiagram myObject = (ActivityDiagram) element;
             return myObject.hasChildren();
         }
     	if (element instanceof Project) {

@@ -17,14 +17,13 @@ public class ImportFromEA extends Action{
     
     @Override
     public void run() {
-    	ImportFromEaDialog importFromEaDialog = new ImportFromEaDialog();
+    	IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
+        Element selectedElement = (Element) selection.getFirstElement();
+        
+    	ImportFromEaDialog importFromEaDialog = new ImportFromEaDialog(selectedElement);
     	importFromEaDialog.open();
     	
-    	if(importFromEaDialog.isSuccessful() != null) {
-    		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
-            Element selectedElement = (Element) selection.getFirstElement();
+        treeViewer.refresh();
 
-            treeViewer.refresh();
-    	}
     }
 }

@@ -1,6 +1,7 @@
 package dialogs;
 
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -20,14 +21,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
-import models.RootManager;
+import utilities.EAXMLReader;
+import models.Element;
+import models.Project;
 
 public class ImportFromEaDialog extends TitleAreaDialog{
 	private Boolean successful;
 	private Text fileText;
+	Project selectedProject;
     
-    public ImportFromEaDialog() {
+    public ImportFromEaDialog(Element selectedElement) {        
         super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
+        this.selectedProject = (Project) selectedElement;
     }
 
     @Override
@@ -89,7 +94,10 @@ public class ImportFromEaDialog extends TitleAreaDialog{
     		@Override
     		public void handleEvent(Event arg0) {
     			JFileChooser j = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
-    			 
+    			FileNameExtensionFilter filter = new FileNameExtensionFilter("EA xml files", "xml");
+    			j.setFileFilter(filter);
+    			
+    			
     	        int r = j.showOpenDialog(null);
 
     	        if (r == JFileChooser.APPROVE_OPTION)
@@ -111,11 +119,14 @@ public class ImportFromEaDialog extends TitleAreaDialog{
     protected void okPressed() {
     	//If we want to create an element with an existing name, we throw an error
     	if(fileText.getText() != "") {
-        	if(RootManager.getInstance().getAllInstances().containsKey(fileText.getText())) {
-        		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Failed to import the project, did you select the correct file ?");
-        	} else {
-        		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The import was succesful, but it is not implemented yet :).");
-        	}
+    		EAXMLReader xmlReader = new EAXMLReader(selectedProject, fileText.getText());
+    		try {
+    			xmlReader.createStructure();
+			}
+			catch(Exception e) {
+				MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "Failed to import the project, did you select the correct file ?");
+			}
+    		super.okPressed();	
     	}
     }
 
