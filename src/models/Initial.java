@@ -7,6 +7,10 @@ public class Initial extends Element{
 	public Initial(String name) {
         super(name);
     }
+	
+	public Initial(String name, String alias) {
+        super(name,alias);
+    }
     
     public Initial(String name, int sortOrder) {
         super(name, sortOrder);

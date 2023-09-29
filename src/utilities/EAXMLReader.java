@@ -95,7 +95,7 @@ public class EAXMLReader {
 				String name = eElement.getAttribute("name");
 				String desc = "";
 				if (type.contains("uml")) {
-					XmlObject xmlO = new XmlObject(id, type, name, desc, 0, "");
+					XmlObject xmlO = new XmlObject(id, type, name, desc, 0, "", "");
 					nodeMap.put(id, xmlO);
 				}
 			}
@@ -113,6 +113,7 @@ public class EAXMLReader {
 				String desc = "";
 				String owner = "";
 				String className = "";
+				String alias = "";
 				int orderNum = 0;
 				HashMap<String, String> tags = new HashMap<String, String>();
 				List<String> classes = new ArrayList<String>();
@@ -127,6 +128,11 @@ public class EAXMLReader {
 							.getNamedItem("documentation") != null) {
 						desc = eElement.getElementsByTagName("properties").item(0).getAttributes()
 								.getNamedItem("documentation").getNodeValue();
+					}
+					if (eElement.getElementsByTagName("properties").item(0).getAttributes()
+							.getNamedItem("alias") != null) {
+						alias = eElement.getElementsByTagName("properties").item(0).getAttributes()
+								.getNamedItem("alias").getNodeValue();
 					}
 					if (eElement.getElementsByTagName("tag").getLength() != 0) {
 						for (int i = 0; i < eElement.getElementsByTagName("tag").getLength(); i++) {
@@ -156,11 +162,11 @@ public class EAXMLReader {
 
 					if (nodeMap.containsKey(id)) {
 						XmlObject xmlO = new XmlObject(id, nodeMap.get(id).getType(), name, desc, orderNum, owner, tags,
-								classes);
+								classes, alias);
 						nodeMap.put(id, xmlO);
 					}
 					if (type.contains("uml:Object")) {
-						XmlObject xmlO = new XmlObject(id, "object", name, desc, orderNum, owner, tags, classes);
+						XmlObject xmlO = new XmlObject(id, "object", name, desc, orderNum, owner, tags, classes, alias);
 						nodeMap.put(id, xmlO);
 					}
 				}
@@ -171,11 +177,11 @@ public class EAXMLReader {
 	private void createADElements() {
 		for (XmlObject xmls : nodeMap.values()) {
 			if (xmls.getType().equals("action")) {
-				this.activityDiagram.addChild(new Action(xmls.getName()));
+				this.activityDiagram.addChild(new Action(xmls.getName(), xmls.getAlias()));
 			} else if (xmls.getType().equals("initial node")) {
-				this.activityDiagram.addChild(new Initial(xmls.getName()));
+				this.activityDiagram.addChild(new Initial(xmls.getName(),xmls.getAlias()));
 			} else if (xmls.getType().equals("final node")) {
-				this.activityDiagram.addChild(new Final(xmls.getName()));
+				this.activityDiagram.addChild(new Final(xmls.getName(), xmls.getAlias()));
 			}
 		}
 	}

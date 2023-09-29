@@ -20,6 +20,7 @@ import models.RootManager;
 
 public class ElementDetail extends TitleAreaDialog{
 	private Text elementName;
+	private Text elementAlias;
 
     private Element selectedElement;
     
@@ -80,6 +81,13 @@ public class ElementDetail extends TitleAreaDialog{
         elementName = new Text(container, SWT.BORDER);
         elementName.setLayoutData(dataProjectName);
         elementName.setText(this.selectedElement.getName());
+        
+        Label lbtAlias = new Label(container, SWT.NONE);
+        lbtAlias.setText("Alias");
+        
+        elementAlias = new Text(container, SWT.BORDER);
+        elementAlias.setLayoutData(dataProjectName);
+        elementAlias.setText(this.selectedElement.getAlias());
     }
 
     @Override
@@ -94,6 +102,7 @@ public class ElementDetail extends TitleAreaDialog{
     		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
     	} else {
         	this.selectedElement.setName(elementName.getText());
+        	this.selectedElement.setAlias(elementAlias.getText());
             super.okPressed();	
     	}
     }

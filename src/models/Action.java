@@ -6,6 +6,10 @@ public class Action extends Element{
 	public Action(String name) {
         super(name);
     }
+	
+	public Action(String name, String alias) {
+        super(name,alias);
+    }
     
     public Action(String name, int sortOrder) {
         super(name, sortOrder);

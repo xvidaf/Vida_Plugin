@@ -8,10 +8,11 @@ public class Element implements Serializable{
 
 	private static final long serialVersionUID = -2161167441824704445L;
 	
-	private String name;
+	private String name = "";
     protected Element parent;
     private ArrayList<Element> children;
     private int sortOrder;
+    private String alias = "";
     
     public Element() {
     	this.children = new ArrayList<>();
@@ -21,6 +22,12 @@ public class Element implements Serializable{
     public Element(String name) {
     	this.name = name;
     	this.children = new ArrayList<>();
+    }
+    
+    public Element(String name, String alias) {
+    	this.name = name;
+    	this.children = new ArrayList<>();
+    	this.setAlias(alias);
     }
     
     public Element(String name, int sortOrder) {
@@ -87,6 +94,14 @@ public class Element implements Serializable{
 			return true;
 		}
 		return false;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 
 }

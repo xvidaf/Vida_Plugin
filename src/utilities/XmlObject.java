@@ -15,8 +15,9 @@ public class XmlObject {
 	private String owner;
 	private HashMap tags;
 	private List classes;
+	private String alias;
 	
-	public XmlObject(String ObjectID, String type, String name, String desc, int orderNum, String owner){
+	public XmlObject(String ObjectID, String type, String name, String desc, int orderNum, String owner, String alias){
 		this.ObjectID = ObjectID;
 		this.setType(type);
 		this.setActivityTypeIndex(this.type);
@@ -27,9 +28,10 @@ public class XmlObject {
 		this.description = desc;
 		this.orderNum = orderNum;
 		this.owner = owner;
+		this.setAlias(alias);
 	}
 	
-	public XmlObject(String ObjectID, String type, String name, String desc, int orderNum, String owner, HashMap tags, List classes){
+	public XmlObject(String ObjectID, String type, String name, String desc, int orderNum, String owner, HashMap tags, List classes, String alias){
 		this.ObjectID = ObjectID;
 		this.setType(type);
 		this.setActivityTypeIndex(this.type);
@@ -42,13 +44,15 @@ public class XmlObject {
 		this.owner = owner;
 		this.tags = tags;
 		this.classes = classes;
+		this.setAlias(alias);
 	}
 	
-	public XmlObject(String ObjectID, String type, String source, String target){
+	public XmlObject(String ObjectID, String type, String source, String target, String alias){
 		this.ObjectID = ObjectID;
 		this.type = type;
 		this.sourceID = source;
 		this.targetID = target;
+		this.setAlias(alias);
 	}
 	
 	
@@ -205,6 +209,14 @@ public class XmlObject {
 
 	public void setClasses(List classes) {
 		this.classes = classes;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 	
 	

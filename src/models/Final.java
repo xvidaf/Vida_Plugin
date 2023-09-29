@@ -7,6 +7,10 @@ public class Final extends Element{
 	public Final(String name) {
         super(name);
     }
+	
+	public Final(String name, String alias) {
+        super(name,alias);
+    }
     
     public Final(String name, int sortOrder) {
         super(name, sortOrder);
