@@ -7,6 +7,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import models.ActivityDiagram;
 import models.Project;
 import models.RootManager;
+import models.UMLAction;
 
 public class MyContentProvider implements ITreeContentProvider {
     @Override
@@ -43,6 +44,10 @@ public class MyContentProvider implements ITreeContentProvider {
             Project myObject = (Project) parentElement;
             return myObject.getChildren().toArray();
         }
+    	if (parentElement instanceof UMLAction) {
+    		UMLAction myObject = (UMLAction) parentElement;
+            return myObject.getChildren().toArray();
+        }
     	return new Object[0];
     }
 
@@ -58,6 +63,10 @@ public class MyContentProvider implements ITreeContentProvider {
         }
     	if (element instanceof Project) {
             Project myObject = (Project) element;
+            return myObject.hasChildren();
+        }
+    	if (element instanceof UMLAction) {
+    		UMLAction myObject = (UMLAction) element;
             return myObject.hasChildren();
         }
         return false;

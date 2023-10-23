@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import models.Action;
+import models.UMLAction;
 import models.ActivityDiagram;
 import models.Final;
 import models.Initial;
@@ -177,7 +177,7 @@ public class EAXMLReader {
 	private void createADElements() {
 		for (XmlObject xmls : nodeMap.values()) {
 			if (xmls.getType().equals("action")) {
-				this.activityDiagram.addChild(new Action(xmls.getName(), xmls.getAlias()));
+				this.activityDiagram.addChild(new UMLAction(xmls.getName(), xmls.getAlias()));
 			} else if (xmls.getType().equals("initial node")) {
 				this.activityDiagram.addChild(new Initial(xmls.getName(),xmls.getAlias()));
 			} else if (xmls.getType().equals("final node")) {

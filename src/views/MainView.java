@@ -54,6 +54,7 @@ import models.OpenedProjects;
 import models.Project;
 import models.RootManager;
 import models.Settings;
+import models.UMLAction;
 
 public class MainView extends org.eclipse.ui.part.ViewPart {
 
@@ -112,7 +113,6 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			treeViewer.setInput(getInitialInput());
 		}
 
-		getSite().setSelectionProvider(treeViewer);
 	}
 
 	public void saveState(IMemento memento) {
@@ -235,7 +235,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
 			menuManager.add(importFromEa);
-		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof Action) {
+		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof UMLAction) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
@@ -277,23 +277,52 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 	private Object getInitialInput() {
 
-		Project rootProject = new Project("Project 1");
+		Initial initialNode = new Initial("Start Node");
+		Final finalNode = new Final("Final Node");
+		
+		Project rootProject = new Project("Evaluation");
+		ActivityDiagram orderRoot = new ActivityDiagram("Order");
+		UMLAction child11_1 = new UMLAction("Display Catalog List",1);
+		UMLAction child11_2 = new UMLAction("Request Catalog Content",2);
+		UMLAction child11_3 = new UMLAction("Display Product List",3);
+		UMLAction child11_4 = new UMLAction("Select Product",4);
+		UMLAction child11_5 = new UMLAction("Request Product Info",5);
+		UMLAction child11_6 = new UMLAction("Display Product Info",6);
+		UMLAction child11_7 = new UMLAction("Input Quality and Confirm Order",7);
+		UMLAction child11_8 = new UMLAction("Add product to cart",8);
+		UMLAction child11_9 = new UMLAction("Calculate Subtotal",9);
+		UMLAction child11_10 = new UMLAction("Display Cart",10);
+		
+		
+		orderRoot.addChild(child11_1);
+		orderRoot.addChild(child11_2);
+		orderRoot.addChild(child11_3);
+		orderRoot.addChild(child11_4);
+		orderRoot.addChild(child11_5);
+		orderRoot.addChild(child11_6);
+		orderRoot.addChild(child11_7);
+		orderRoot.addChild(child11_8);
+		orderRoot.addChild(child11_9);
+		orderRoot.addChild(child11_10);
+		orderRoot.addChild(initialNode);
+		orderRoot.addChild(finalNode);
 
-		ActivityDiagram root1 = new ActivityDiagram("Root 1");
-		ActivityDiagram child11 = new ActivityDiagram("Child 1-1");
-		ActivityDiagram child12 = new ActivityDiagram("Child 1-2");
-		root1.addChild(child11);
-		root1.addChild(child12);
+		ActivityDiagram loginRoot = new ActivityDiagram("Login");
+		UMLAction child11 = new UMLAction("Display Login Form",1);
+		UMLAction child12 = new UMLAction("Input credentials",2);
+		UMLAction child13 = new UMLAction("Authenticate",3);
+		UMLAction child14 = new UMLAction("Display Main Page",4);
+		
+		rootProject.addChild(loginRoot);
+		loginRoot.addChild(child11);
+		loginRoot.addChild(child12);
+		loginRoot.addChild(child13);
+		loginRoot.addChild(child14);
+		loginRoot.addChild(initialNode);
+		loginRoot.addChild(finalNode);
 
-		ActivityDiagram root2 = new ActivityDiagram("Root 2");
-		ActivityDiagram child21 = new ActivityDiagram("Child 2-1");
-		root2.addChild(child21);
-
-		Initial initialNode = new Initial("I should be first");
-		Final finalNode = new Final("I should be last");
-
-		rootProject.addChild(root1);
-		rootProject.addChild(root2);
+		
+		rootProject.addChild(orderRoot);
 		rootProject.addChild(initialNode);
 		rootProject.addChild(finalNode);
 		RootManager.getInstance().addChild(rootProject);

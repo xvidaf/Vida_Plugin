@@ -1,5 +1,6 @@
 package views;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
@@ -32,25 +33,24 @@ public class MyLabelProvider extends LabelProvider {
 
     @Override
     public Image getImage(Object element) {
+    	// TODO Doplnit ostatne
         // Return the image for the given element
         // You can use different icons based on the object type or other criteria
         if (element instanceof ActivityDiagram) {
-            return getImageForMyObject((ActivityDiagram) element);
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/adwords.png"))).createImage();
+        } else if (element instanceof models.Class) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/class_obj.png"))).createImage();
+        } else if (element instanceof models.Method) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/methdef_obj.png"))).createImage();
+        } else if (element instanceof models.Project) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/presentation.png"))).createImage();
+        } else if (element instanceof models.Initial) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/initial.png"))).createImage();
+        } else if (element instanceof models.Final) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/final.png"))).createImage();
+        } else if (element instanceof models.UMLAction) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/Action.png"))).createImage();
         }
         return super.getImage(element);
     }
-
-    private Image getImageForMyObject(ActivityDiagram myObject) {
-        // Logic to determine the appropriate image based on the MyObject instance
-        // You can use image descriptors or create images from files
-        // For example, if you have different icons for different object types:
-        // if (myObject instanceof SomeType) {
-        //     return Activator.getImageDescriptor("path/to/icon1.png").createImage();
-        // } else if (myObject instanceof AnotherType) {
-        //     return Activator.getImageDescriptor("path/to/icon2.png").createImage();
-        // }
-        // Return a default image if needed
-        return null;
-    }
-
 }
