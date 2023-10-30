@@ -1,6 +1,8 @@
 package dialogs;
 
+import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -18,21 +20,22 @@ import org.eclipse.ui.PlatformUI;
 
 import models.OpenedProjects;
 import models.RootManager;
+import models.Variable;
 
-public class CreateClassDialog extends TitleAreaDialog{
+public class CreateVariableDialog extends TitleAreaDialog{
 	private Combo selectClass;
 	private Boolean created;
-	private models.Class createdObject;
+	private Variable createdObject;
     
-    public CreateClassDialog() {
+    public CreateVariableDialog() {
         super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
     }
 
     @Override
     public void create() {
         super.create();
-        setTitle("Create a New Class Reference");
-        setMessage("You can specify which class you want to reference.\nNote that the class choices are taken from opened projects.\nConfirm the creation with the create button.", IMessageProvider.INFORMATION);
+        setTitle("Create a New Variable Reference");
+        setMessage("You can specify which variable you want to reference.\nNote that the choices are taken from opened projects.\nConfirm the creation with the create button.", IMessageProvider.INFORMATION);
     }
 
     @Override
@@ -43,7 +46,7 @@ public class CreateClassDialog extends TitleAreaDialog{
         GridLayout layout = new GridLayout(2, false);
         container.setLayout(layout);
 
-        createProjectName(container);
+        createVariableNames(container);
 
         return area;
     }
@@ -53,7 +56,7 @@ public class CreateClassDialog extends TitleAreaDialog{
     {
       super.configureShell(newShell);
 
-      newShell.setText("Create new class reference");
+      newShell.setText("Create new variable reference");
     }
     
     @Override
@@ -69,9 +72,9 @@ public class CreateClassDialog extends TitleAreaDialog{
      setButtonLayoutData(cancel);
   }
 
-    private void createProjectName(Composite container) {
+    private void createVariableNames(Composite container) {
         Label lbtProjectName = new Label(container, SWT.NONE);
-        lbtProjectName.setText("Class to reference");
+        lbtProjectName.setText("Variable to reference");
 
         GridData dataProjectName = new GridData();
         dataProjectName.grabExcessHorizontalSpace = true;
@@ -81,8 +84,15 @@ public class CreateClassDialog extends TitleAreaDialog{
         selectClass.setLayoutData(dataProjectName);
         
         
-        for(IType selectedClass : OpenedProjects.getInstance().getClasses()) {
-        	selectClass.add(selectedClass.getFullyQualifiedName());
+        for(IType selectedClass : OpenedProjects.getInstance().getClasses()) {       	
+        	try {
+        		IField[] fields = selectedClass.getFields();
+        	    for (IField field : fields) {
+        	        selectClass.add(selectedClass.getFullyQualifiedName() + " " + field.getTypeSignature() + " " + field.getElementName());
+        	    }
+        	} catch (JavaModelException e) {
+        	    e.printStackTrace();
+        	}
         }
         
     }
@@ -99,8 +109,30 @@ public class CreateClassDialog extends TitleAreaDialog{
         	if(RootManager.getInstance().getAllInstances().containsKey(selectClass.getText())) {
         		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
         	} else {
-        		IType createdClass = OpenedProjects.getInstance().findClassByFullyQualifiedName(selectClass.getText());
-        		this.createdObject = new models.Class(createdClass);
+        		IField createdVariable = null;
+        		IType associatedClass = null;
+
+        		for(IType selectedClass : OpenedProjects.getInstance().getClasses()) {       	
+                	try {
+                		IField[] fields = selectedClass.getFields();
+                	    for (IField field : fields) {
+                	        if(this.selectClass.getText().equals(selectedClass.getFullyQualifiedName() + " " + field.getTypeSignature() + " " + field.getElementName())) {
+                	        	createdVariable = field;
+                	        	associatedClass = selectedClass;
+                	        	break;
+                	        }
+                	    }
+                	} catch (JavaModelException e) {
+                	    e.printStackTrace();
+                	}
+                }
+        		
+        		
+        		try {
+					this.createdObject = new Variable(createdVariable, associatedClass);
+				} catch (JavaModelException e) {
+					e.printStackTrace();
+				}
             	this.created = true;
                 super.okPressed();	
         	}
@@ -111,7 +143,7 @@ public class CreateClassDialog extends TitleAreaDialog{
 		return created;
 	}
 
-	public models.Class getCreatedElement() {
+	public Variable getCreatedElement() {
 		return createdObject;
 	}
 }

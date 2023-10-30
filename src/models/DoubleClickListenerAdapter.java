@@ -38,6 +38,13 @@ public class DoubleClickListenerAdapter implements IDoubleClickListener{
 				if(JavaUI.openInEditor(methodToOpen.getReferencedMethod()) == null) {
 					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The selected method cannot be found, was it deleted?");
 				}
+	        } else if(selectedElement instanceof Variable){
+	        	Variable variableToOpen = (Variable) selectedElement;
+	        	variableToOpen.updateReferencedClass();
+	        	variableToOpen.updateReferencedVariable();
+				if(JavaUI.openInEditor(variableToOpen.getReferencedVariable()) == null) {
+					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The selected method cannot be found, was it deleted?");
+				}
 	        }
 		} catch (PartInitException e) {
 			e.printStackTrace();

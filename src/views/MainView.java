@@ -37,6 +37,7 @@ import actions.CreateClass;
 import actions.CreateMethod;
 import actions.CreateObject;
 import actions.CreateProject;
+import actions.CreateVariable;
 import actions.RefreshTree;
 import actions.RefreshOpenedProjects;
 import actions.DeleteObject;
@@ -226,7 +227,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
-			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod, Action importFromEa) {
+			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod, Action importFromEa, Action createVariable) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -241,6 +242,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			newMenuManager.add(createObject);
 			newMenuManager.add(createClass);
 			newMenuManager.add(createMethod);
+			newMenuManager.add(createVariable);
 		}
 		menuManager.add(createProject);
 		if (selectedElement instanceof Element) {
@@ -265,12 +267,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		CreateClass createClass = new CreateClass(treeViewer);
 		CreateMethod createMethod = new CreateMethod(treeViewer);
 		ImportFromEA importFromEa = new ImportFromEA(treeViewer);
+		CreateVariable createVariable = new CreateVariable(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod, importFromEa);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod, importFromEa, createVariable);
 			}
 		});
 	}
