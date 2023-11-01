@@ -34,6 +34,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
 import actions.CreateClass;
+import actions.CreateGenericFile;
 import actions.CreateMethod;
 import actions.CreateObject;
 import actions.CreateProject;
@@ -227,7 +228,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
-			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod, Action importFromEa, Action createVariable) {
+			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod, Action importFromEa, Action createVariable, Action createFile) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -243,6 +244,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			newMenuManager.add(createClass);
 			newMenuManager.add(createMethod);
 			newMenuManager.add(createVariable);
+			newMenuManager.add(createFile);
 		}
 		menuManager.add(createProject);
 		if (selectedElement instanceof Element) {
@@ -268,12 +270,13 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		CreateMethod createMethod = new CreateMethod(treeViewer);
 		ImportFromEA importFromEa = new ImportFromEA(treeViewer);
 		CreateVariable createVariable = new CreateVariable(treeViewer);
+		CreateGenericFile createFile = new CreateGenericFile(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod, importFromEa, createVariable);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod, importFromEa, createVariable, createFile);
 			}
 		});
 	}

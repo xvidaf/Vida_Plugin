@@ -1,5 +1,7 @@
 package models;
 
+import java.io.IOException;
+
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -45,6 +47,14 @@ public class DoubleClickListenerAdapter implements IDoubleClickListener{
 				if(JavaUI.openInEditor(variableToOpen.getReferencedVariable()) == null) {
 					MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The selected method cannot be found, was it deleted?");
 				}
+	        } else if(selectedElement instanceof GenericFile){
+	        	try {
+	        		GenericFile toOpen = (GenericFile) selectedElement;
+	        	    String filePath = toOpen.getAbsolutePath(); // Replace with your file path
+	        	    Runtime.getRuntime().exec("explorer.exe /select," + filePath);
+	        	} catch (IOException e) {
+	        	    e.printStackTrace();
+	        	}
 	        }
 		} catch (PartInitException e) {
 			e.printStackTrace();
