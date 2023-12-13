@@ -33,6 +33,7 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
+import actions.CreateAction;
 import actions.CreateClass;
 import actions.CreateGenericFile;
 import actions.CreateMethod;
@@ -92,7 +93,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		DropTarget target = new DropTarget(treeViewer.getControl(), DND.DROP_MOVE);
 		target.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		target.addDropListener(new DropSourceListenerAdapter(this.treeViewer));
-		
+
 		treeViewer.addDoubleClickListener(new DoubleClickListenerAdapter(this.treeViewer));
 
 		// Get the toolbar manager of the TreeViewer
@@ -101,14 +102,14 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		// Add action to the toolbar manager
 		RefreshOpenedProjects refreshButton = new RefreshOpenedProjects(treeViewer);
 		toolbarManager.add(refreshButton);
-		
+
 		OpenSettings openSettings = new OpenSettings();
 		toolbarManager.add(openSettings);
 
 		Sorter sorter = new Sorter();
 
 		treeViewer.setComparator(sorter);
-		
+
 		refreshButton.run();
 
 		if (this.restoreState() == false) {
@@ -119,43 +120,43 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 	public void saveState(IMemento memento) {
 		try {
-			//Save RootManager
+			// Save RootManager
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bos);
 			os.writeObject(RootManager.getInstance());
 			String serialized_root = Base64.getEncoder().encodeToString(bos.toByteArray());
-			
-			//Save settings
+
+			// Save settings
 			bos = new ByteArrayOutputStream();
 			os = new ObjectOutputStream(bos);
 			os.writeObject(Settings.getInstance());
 			String serialized_settings = Base64.getEncoder().encodeToString(bos.toByteArray());
-			
-			//close streams
+
+			// close streams
 			os.close();
 			bos.close();
-			
+
 			memento.putString("RootManager", serialized_root);
 			memento.putString("Settings", serialized_settings);
 			memento.putString("SettingsProject", Settings.getInstance().getDesignatedMainProject().getElementName());
-			
-			
-			//Save rootmanager to a file, to ensure git compatability
-			//get object which represents the workspace  
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();  
 
-			//get location of workspace (java.io.File)  
+			// Save rootmanager to a file, to ensure git compatability
+			// get object which represents the workspace
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
+			// get location of workspace (java.io.File)
 			File workspaceDirectory = workspace.getRoot().getLocation().toFile();
-			
-			if(Settings.getInstance().getDesignatedMainProject() != null) {
-				try (PrintWriter out = new PrintWriter(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state")) {
-					try (OutputStream stream = new FileOutputStream(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state")) {
+
+			if (Settings.getInstance().getDesignatedMainProject() != null) {
+				try (PrintWriter out = new PrintWriter(workspaceDirectory.getAbsolutePath()
+						+ Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state")) {
+					try (OutputStream stream = new FileOutputStream(workspaceDirectory.getAbsolutePath()
+							+ Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state")) {
 						os = new ObjectOutputStream(stream);
 						os.writeObject(RootManager.getInstance());
 					}
 				}
 			}
-			
 
 		} catch (Exception ex) {
 			memento = null;
@@ -173,46 +174,48 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		}
 
 		try {
-			//Restore RootManager
+			// Restore RootManager
 			final byte[] data = Base64.getDecoder().decode(memento.getString("RootManager"));
 			ByteArrayInputStream bis = new ByteArrayInputStream(data);
 			ObjectInputStream oInputStream = new ObjectInputStream(bis);
 			RootManager restoredRoot = (RootManager) oInputStream.readObject();
 			RootManager.getInstance().replaceInstance(restoredRoot);
-			
+
 			OpenedProjects.getInstance().refreshReferences();
-			
-			//Restore Settings
+
+			// Restore Settings
 			final byte[] dataSettings = Base64.getDecoder().decode(memento.getString("Settings"));
 			bis = new ByteArrayInputStream(dataSettings);
 			oInputStream = new ObjectInputStream(bis);
 			Settings restoredSettings = (Settings) oInputStream.readObject();
 			Settings.getInstance().replaceInstance(restoredSettings);
-			//Restore designated project
+			// Restore designated project
 			Settings.getInstance().restoredesignatedMainProject(memento.getString("SettingsProject"));
-			
+
 			oInputStream.close();
 			bis.close();
 			memento = null;
-			
-			//If a state file exists, restore it
-			
-			//get object which represents the workspace  
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();  
 
-			//get location of workspace (java.io.File)  
+			// If a state file exists, restore it
+
+			// get object which represents the workspace
+			IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
+			// get location of workspace (java.io.File)
 			File workspaceDirectory = workspace.getRoot().getLocation().toFile();
-			
-			if(Settings.getInstance().getDesignatedMainProject() != null) {
-				//If exists
-				if(new File(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state").isFile()) {
-					FileInputStream fi = new FileInputStream(new File(workspaceDirectory.getAbsolutePath() + Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state"));
+
+			if (Settings.getInstance().getDesignatedMainProject() != null) {
+				// If exists
+				if (new File(workspaceDirectory.getAbsolutePath()
+						+ Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state").isFile()) {
+					FileInputStream fi = new FileInputStream(new File(workspaceDirectory.getAbsolutePath()
+							+ Settings.getInstance().getDesignatedMainProject().getPath() + "/plugin_state"));
 					oInputStream = new ObjectInputStream(fi);
 					RootManager restoredRootFromFile = (RootManager) oInputStream.readObject();
 					RootManager.getInstance().replaceInstance(restoredRootFromFile);
 				}
 			}
-			
+
 			treeViewer.setInput(RootManager.getInstance());
 			return true;
 		} catch (Exception ex) {
@@ -228,7 +231,8 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	}
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
-			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod, Action importFromEa, Action createVariable, Action createFile) {
+			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod,
+			Action importFromEa, Action createVariable, Action createFile, Action createAction) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -237,7 +241,16 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
 			menuManager.add(importFromEa);
-		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof UMLAction) {
+		} else if (selectedElement instanceof ActivityDiagram ) {
+			MenuManager newMenuManager = new MenuManager("New");
+			menuManager.add(newMenuManager);
+			newMenuManager.add(createAction);
+			newMenuManager.add(createObject);
+			newMenuManager.add(createClass);
+			newMenuManager.add(createMethod);
+			newMenuManager.add(createVariable);
+			newMenuManager.add(createFile);
+		} else if (selectedElement instanceof UMLAction) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
@@ -271,12 +284,14 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		ImportFromEA importFromEa = new ImportFromEA(treeViewer);
 		CreateVariable createVariable = new CreateVariable(treeViewer);
 		CreateGenericFile createFile = new CreateGenericFile(treeViewer);
+		CreateAction createAction = new CreateAction(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
-				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties, createClass, createMethod, importFromEa, createVariable, createFile);
+				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties,
+						createClass, createMethod, importFromEa, createVariable, createFile, createAction);
 			}
 		});
 	}
@@ -285,21 +300,20 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 		Initial initialNode = new Initial("Start Node");
 		Final finalNode = new Final("Final Node");
-		
+
 		Project rootProject = new Project("Evaluation");
 		ActivityDiagram orderRoot = new ActivityDiagram("Order");
-		UMLAction child11_1 = new UMLAction("Display Catalog List",1);
-		UMLAction child11_2 = new UMLAction("Request Catalog Content",2);
-		UMLAction child11_3 = new UMLAction("Display Product List",3);
-		UMLAction child11_4 = new UMLAction("Select Product",4);
-		UMLAction child11_5 = new UMLAction("Request Product Info",5);
-		UMLAction child11_6 = new UMLAction("Display Product Info",6);
-		UMLAction child11_7 = new UMLAction("Input Quality and Confirm Order",7);
-		UMLAction child11_8 = new UMLAction("Add product to cart",8);
-		UMLAction child11_9 = new UMLAction("Calculate Subtotal",9);
-		UMLAction child11_10 = new UMLAction("Display Cart",10);
-		
-		
+		UMLAction child11_1 = new UMLAction("Display Catalog List", 1);
+		UMLAction child11_2 = new UMLAction("Request Catalog Content", 2);
+		UMLAction child11_3 = new UMLAction("Display Product List", 3);
+		UMLAction child11_4 = new UMLAction("Select Product", 4);
+		UMLAction child11_5 = new UMLAction("Request Product Info", 5);
+		UMLAction child11_6 = new UMLAction("Display Product Info", 6);
+		UMLAction child11_7 = new UMLAction("Input Quality and Confirm Order", 7);
+		UMLAction child11_8 = new UMLAction("Add product to cart", 8);
+		UMLAction child11_9 = new UMLAction("Calculate Subtotal", 9);
+		UMLAction child11_10 = new UMLAction("Display Cart", 10);
+
 		orderRoot.addChild(child11_1);
 		orderRoot.addChild(child11_2);
 		orderRoot.addChild(child11_3);
@@ -314,11 +328,11 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		orderRoot.addChild(finalNode);
 
 		ActivityDiagram loginRoot = new ActivityDiagram("Login");
-		UMLAction child11 = new UMLAction("Display Login Form",1);
-		UMLAction child12 = new UMLAction("Input credentials",2);
-		UMLAction child13 = new UMLAction("Authenticate",3);
-		UMLAction child14 = new UMLAction("Display Main Page",4);
-		
+		UMLAction child11 = new UMLAction("Display Login Form", 1);
+		UMLAction child12 = new UMLAction("Input credentials", 2);
+		UMLAction child13 = new UMLAction("Authenticate", 3);
+		UMLAction child14 = new UMLAction("Display Main Page", 4);
+
 		rootProject.addChild(loginRoot);
 		loginRoot.addChild(child11);
 		loginRoot.addChild(child12);
@@ -327,7 +341,6 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		loginRoot.addChild(initialNode);
 		loginRoot.addChild(finalNode);
 
-		
 		rootProject.addChild(orderRoot);
 		rootProject.addChild(initialNode);
 		rootProject.addChild(finalNode);
