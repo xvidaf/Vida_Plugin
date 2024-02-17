@@ -13,6 +13,7 @@ import java.util.Base64;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -21,13 +22,23 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DropTarget;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewSite;
@@ -51,6 +62,7 @@ import models.DragSourceListenerAdapter;
 import models.DropSourceListenerAdapter;
 import models.Element;
 import models.Final;
+import models.ImageFinder;
 import models.Initial;
 import models.ActivityDiagram;
 import models.OpenedProjects;
@@ -64,22 +76,65 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	private TreeViewer treeViewer;
 
 	private IMemento memento;
-
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		// Create a composite as the container for the MainView
 		Composite container = new Composite(parent, SWT.NONE);
-		container.setLayout(new FillLayout());
-
+		//container.setLayout(new FillLayout());
+		container.setLayout(new GridLayout(1, false));
+		
 		// Create the MainView
 		treeViewer = new TreeViewer(container, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
+		
+	    GridData treeViewerLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+	    treeViewerLayoutData.verticalSpan = 75; // Span 1 column
+	    treeViewer.getControl().setLayoutData(treeViewerLayoutData);
 
 		// Set the content provider
 		treeViewer.setContentProvider(new MyContentProvider());
 
 		// Set the label provider
 		treeViewer.setLabelProvider(new MyLabelProvider());
+		
+        Composite comboArea = new Composite(container, SWT.CENTER);
+        comboArea.setLayout(new GridLayout(2, false));
+        comboArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+        Label lbtProjectName = new Label(comboArea, SWT.TOP);
+        lbtProjectName.setText("Displayed Image:");
+        Combo selectImage = new Combo(comboArea, SWT.BORDER | SWT.READ_ONLY);
+        
+		// Create a ScrolledComposite as a placeholder for the ImageViewer
+	    ScrolledComposite scrolledComposite = new ScrolledComposite(comboArea, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+	    GridData scrolledLayoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
+	    scrolledLayoutData.horizontalSpan = 2;
+	    scrolledComposite.setLayoutData(scrolledLayoutData);
+	    
+	    // Create a composite to hold the image
+	    Composite imageComposite = new Composite(scrolledComposite, SWT.CENTER);
+	    imageComposite.setLayout(new GridLayout(1, false));
+
+	    // Load an image (replace "path/to/your/image.png" with the actual path to your image)
+	    Image image = new Image(null, "C:\\Users\\vidaf\\Desktop\\53b04264-831d-4940-a193-da0ac2c22706.png");
+
+	    // Create a Label to display the image
+	    Label imageLabel = new Label(imageComposite, SWT.CENTER);
+	    imageLabel.setImage(null);
+	    
+	    // Set the size of the Label to the size of the image
+	    imageLabel.setSize(image.getBounds().width, image.getBounds().height);
+
+	    // Set the content of the ScrolledComposite
+	    scrolledComposite.setContent(imageComposite);
+
+	    // Set the minimum size for scrolling
+	    scrolledComposite.setMinSize(imageComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+
+	    // Enable automatic scrolling
+	    scrolledComposite.setExpandHorizontal(true);
+	    scrolledComposite.setExpandVertical(true);
+		
 		// Set the MainView as the control for the view
 		this.setPartName("My Custom View");
 		// this.setTitleImage(Activator.getImageDescriptor("path/to/icon.png").createImage());
@@ -115,11 +170,46 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		if (this.restoreState() == false) {
 			treeViewer.setInput(getInitialInput());
 		}
-
+		
+		ImageFinder.getInstance().setPathToImageDir();
+        
+		if(ImageFinder.getInstance().getImages() != null) {
+	        for(File newImage : ImageFinder.getInstance().getImages()) {
+	        	selectImage.add(newImage.getName());
+	        }
+		}
+        selectImage.add("None");
+		
+        selectImage.addSelectionListener(new SelectionAdapter()
+        {
+          @Override
+          public void widgetSelected(final SelectionEvent event)
+          {           
+            if(ImageFinder.getInstance().getImages() != null) {
+            	if(!ImageFinder.getInstance().getPathToImageByName(selectImage.getText()).equals("None")) {
+            		Image newImage = new Image(null, ImageFinder.getInstance().getPathToImageByName(selectImage.getText()));
+            		imageLabel.setSize(newImage.getBounds().width, newImage.getBounds().height);
+            		imageLabel.setImage(newImage); 
+            	    scrolledComposite.setContent(imageComposite);
+            	    scrolledComposite.setSize(newImage.getBounds().width, newImage.getBounds().height);
+            	    comboArea.setSize(newImage.getBounds().width, newImage.getBounds().height);
+            	    scrolledComposite.setMinSize(imageComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+            	    scrolledComposite.setExpandHorizontal(true);
+            	    scrolledComposite.setExpandVertical(true);
+            	} else {
+            		imageLabel.setImage(null);    
+            	}   
+            }else {
+            	imageLabel.setImage(null);  
+            }
+          }
+        });
+		
 	}
 
 	public void saveState(IMemento memento) {
 		try {
+			//TODO file saving seems to be broken
 			// Save RootManager
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bos);
