@@ -13,7 +13,6 @@ import java.util.Base64;
 
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -31,13 +30,10 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IMemento;
@@ -46,9 +42,11 @@ import org.eclipse.ui.PartInitException;
 
 import actions.CreateAction;
 import actions.CreateClass;
+import actions.CreateForkJoin;
 import actions.CreateGenericFile;
 import actions.CreateMethod;
 import actions.CreateObject;
+import actions.CreateParallelPath;
 import actions.CreateProject;
 import actions.CreateVariable;
 import actions.RefreshTree;
@@ -62,10 +60,12 @@ import models.DragSourceListenerAdapter;
 import models.DropSourceListenerAdapter;
 import models.Element;
 import models.Final;
+import models.ForkJoin;
 import models.ImageFinder;
 import models.Initial;
 import models.ActivityDiagram;
 import models.OpenedProjects;
+import models.ParallelPath;
 import models.Project;
 import models.RootManager;
 import models.Settings;
@@ -322,7 +322,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
 			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod,
-			Action importFromEa, Action createVariable, Action createFile, Action createAction) {
+			Action importFromEa, Action createVariable, Action createFile, Action createAction, Action createForkJoin, Action createParallelPath) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -331,7 +331,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createObject);
 			menuManager.add(importFromEa);
-		} else if (selectedElement instanceof ActivityDiagram ) {
+		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof ParallelPath) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createAction);
@@ -340,6 +340,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			newMenuManager.add(createMethod);
 			newMenuManager.add(createVariable);
 			newMenuManager.add(createFile);
+			newMenuManager.add(createForkJoin);
 		} else if (selectedElement instanceof UMLAction) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
@@ -348,6 +349,10 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			newMenuManager.add(createMethod);
 			newMenuManager.add(createVariable);
 			newMenuManager.add(createFile);
+		} else if (selectedElement instanceof ForkJoin) {
+			MenuManager newMenuManager = new MenuManager("New");
+			menuManager.add(newMenuManager);
+			newMenuManager.add(createParallelPath);
 		}
 		menuManager.add(createProject);
 		if (selectedElement instanceof Element) {
@@ -375,13 +380,15 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		CreateVariable createVariable = new CreateVariable(treeViewer);
 		CreateGenericFile createFile = new CreateGenericFile(treeViewer);
 		CreateAction createAction = new CreateAction(treeViewer);
+		CreateForkJoin createForkJoin = new CreateForkJoin(treeViewer);
+		CreateParallelPath createParallelAction = new CreateParallelPath(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
 				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties,
-						createClass, createMethod, importFromEa, createVariable, createFile, createAction);
+						createClass, createMethod, importFromEa, createVariable, createFile, createAction, createForkJoin, createParallelAction);
 			}
 		});
 	}

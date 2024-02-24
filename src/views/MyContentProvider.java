@@ -5,6 +5,8 @@ package views;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 
 import models.ActivityDiagram;
+import models.ForkJoin;
+import models.ParallelPath;
 import models.Project;
 import models.RootManager;
 import models.UMLAction;
@@ -48,6 +50,14 @@ public class MyContentProvider implements ITreeContentProvider {
     		UMLAction myObject = (UMLAction) parentElement;
             return myObject.getChildren().toArray();
         }
+    	if (parentElement instanceof ForkJoin) {
+    		ForkJoin myObject = (ForkJoin) parentElement;
+            return myObject.getChildren().toArray();
+        }
+    	if (parentElement instanceof ParallelPath) {
+    		ParallelPath myObject = (ParallelPath) parentElement;
+            return myObject.getChildren().toArray();
+        }
     	return new Object[0];
     }
 
@@ -67,6 +77,14 @@ public class MyContentProvider implements ITreeContentProvider {
         }
     	if (element instanceof UMLAction) {
     		UMLAction myObject = (UMLAction) element;
+            return myObject.hasChildren();
+        }
+    	if (element instanceof ForkJoin) {
+    		ForkJoin myObject = (ForkJoin) element;
+            return myObject.hasChildren();
+        }
+    	if (element instanceof ParallelPath) {
+    		ParallelPath myObject = (ParallelPath) element;
             return myObject.hasChildren();
         }
         return false;
