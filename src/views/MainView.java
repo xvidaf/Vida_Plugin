@@ -427,7 +427,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		orderRoot.addChild(initialNode);
 		orderRoot.addChild(finalNode);
 
-		ActivityDiagram loginRoot = new ActivityDiagram("Login");
+		ActivityDiagram loginRoot = new ActivityDiagram("Log In");
 		UMLAction child11 = new UMLAction("Display Login Form", 1);
 		UMLAction child12 = new UMLAction("Input credentials", 2);
 		UMLAction child13 = new UMLAction("Authenticate", 3);
@@ -440,10 +440,45 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		loginRoot.addChild(child14);
 		loginRoot.addChild(initialNode);
 		loginRoot.addChild(finalNode);
+		
+		Initial initialNodePar = new Initial("StartNode");
+		Final finalNodePar = new Final("FinalNode");
+		
+		ActivityDiagram parRoot = new ActivityDiagram("Parallel Demonstration");
+		UMLAction par_child11_1 = new UMLAction("Login", 1);
+		ForkJoin par_child11_2 = new ForkJoin("Fork/Join1", 2);
+		ParallelPath par_child11_3 = new ParallelPath("Path1.1", 5);
+		ParallelPath par_child11_4 = new ParallelPath("Path1.2", 6);
+		UMLAction par_child11_5 = new UMLAction("Chat", 3);
+		UMLAction par_child11_6 = new UMLAction("Play", 4);
+		ForkJoin par_child11_7 = new ForkJoin("Fork/Join2", 5);
+		ParallelPath par_child11_8 = new ParallelPath("Path2.1", 2);
+		ParallelPath par_child11_9 = new ParallelPath("Path2.2", 3);
+		UMLAction par_child11_10 = new UMLAction("Defeat Monsters", 6);
+		UMLAction par_child11_11 = new UMLAction("Defend Innocents", 7);
+		UMLAction par_child11_12 = new UMLAction("Logout", 8);
+		
+		
+		parRoot.addChild(initialNodePar);
+		parRoot.addChild(finalNodePar);
+		parRoot.addChild(par_child11_1);
+		parRoot.addChild(par_child11_2);
+		par_child11_2.addChild(par_child11_3);
+		par_child11_2.addChild(par_child11_4);
+		par_child11_3.addChild(par_child11_5);
+		par_child11_4.addChild(par_child11_6);
+		par_child11_4.addChild(par_child11_7);
+		par_child11_7.addChild(par_child11_8);
+		par_child11_7.addChild(par_child11_9);
+		par_child11_8.addChild(par_child11_10);
+		par_child11_9.addChild(par_child11_11);
+		parRoot.addChild(par_child11_12);
 
+		
 		rootProject.addChild(orderRoot);
 		rootProject.addChild(initialNode);
 		rootProject.addChild(finalNode);
+		rootProject.addChild(parRoot);
 		RootManager.getInstance().addChild(rootProject);
 		return RootManager.getInstance();
 		// return rootProject;

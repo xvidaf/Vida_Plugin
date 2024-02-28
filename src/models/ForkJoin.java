@@ -9,7 +9,7 @@ public class ForkJoin extends Element{
     }
     
     public ForkJoin(String name, int sortOrder) {
-        super(name);
+        super(name, sortOrder);
     }
 
 }
