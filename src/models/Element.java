@@ -16,7 +16,7 @@ public class Element implements Serializable{
     
     public Element() {
     	this.children = new ArrayList<>();
-    	this.sortOrder = 1000;
+    	this.sortOrder = 99;
     }
     
     public Element(String name) {
@@ -75,6 +75,10 @@ public class Element implements Serializable{
     public boolean hasChildren() {
         return !children.isEmpty();
     }
+    
+	public void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
+	}
 
 	public int getSortOrder() {
 		return sortOrder;

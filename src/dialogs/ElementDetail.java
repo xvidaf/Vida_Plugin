@@ -1,5 +1,6 @@
 package dialogs;
 
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -8,6 +9,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -16,11 +18,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 import models.Element;
+import models.OpenedProjects;
 import models.RootManager;
 
 public class ElementDetail extends TitleAreaDialog{
 	private Text elementName;
 	private Text elementAlias;
+	private Combo elementOrder;
 
     private Element selectedElement;
     
@@ -88,6 +92,18 @@ public class ElementDetail extends TitleAreaDialog{
         elementAlias = new Text(container, SWT.BORDER);
         elementAlias.setLayoutData(dataProjectName);
         elementAlias.setText(this.selectedElement.getAlias());
+        
+        Label lbtOrder = new Label(container, SWT.NONE);
+        lbtOrder.setText("Order");
+        
+        elementOrder = new Combo(container, SWT.BORDER | SWT.READ_ONLY);
+        elementOrder.setLayoutData(dataProjectName);
+        
+        for(int x = 0; x < 100; x++) {
+        	elementOrder.add(String.valueOf(x));
+        }
+        
+        elementOrder.select(selectedElement.getSortOrder());
     }
 
     @Override
@@ -98,11 +114,14 @@ public class ElementDetail extends TitleAreaDialog{
     @Override
     protected void okPressed() {
     	//If we want to change the name of the Element, but the name already exists, we throw error
-    	if(selectedElement.getName() != elementName.getText() && RootManager.getInstance().getAllInstances().containsKey(elementName.getText()) && selectedElement.getName() != "") {
+    	if(!selectedElement.getName().equals(elementName.getText()) && RootManager.getInstance().getAllInstances().containsKey(elementName.getText()) && selectedElement.getName() != "") {
+    		System.out.println(selectedElement.getName());
+    		System.out.println(elementName.getText());
     		MessageDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Error", "The name of the element must be unique.");
     	} else {
         	this.selectedElement.setName(elementName.getText());
         	this.selectedElement.setAlias(elementAlias.getText());
+        	this.selectedElement.setSortOrder(Integer.valueOf(elementOrder.getText()));
             super.okPressed();	
     	}
     }

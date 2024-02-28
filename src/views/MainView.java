@@ -41,6 +41,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
 
 import actions.CreateAction;
+import actions.CreateActivityDiagram;
 import actions.CreateClass;
 import actions.CreateForkJoin;
 import actions.CreateGenericFile;
@@ -322,13 +323,14 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
 			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod,
-			Action importFromEa, Action createVariable, Action createFile, Action createAction, Action createForkJoin, Action createParallelPath) {
+			Action importFromEa, Action createVariable, Action createFile, Action createAction, Action createForkJoin, Action createParallelPath, Action createADAction) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
 		if (selectedElement instanceof Project) {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
+			newMenuManager.add(createADAction);
 			newMenuManager.add(createObject);
 			menuManager.add(importFromEa);
 		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof ParallelPath) {
@@ -382,13 +384,14 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		CreateAction createAction = new CreateAction(treeViewer);
 		CreateForkJoin createForkJoin = new CreateForkJoin(treeViewer);
 		CreateParallelPath createParallelAction = new CreateParallelPath(treeViewer);
+		CreateActivityDiagram createADAction = new CreateActivityDiagram(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
 				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties,
-						createClass, createMethod, importFromEa, createVariable, createFile, createAction, createForkJoin, createParallelAction);
+						createClass, createMethod, importFromEa, createVariable, createFile, createAction, createForkJoin, createParallelAction, createADAction);
 			}
 		});
 	}
