@@ -10,6 +10,7 @@ import models.ParallelPath;
 import models.Project;
 import models.RootManager;
 import models.UMLAction;
+import models.UnassignedClasses;
 
 public class MyContentProvider implements ITreeContentProvider {
     @Override
@@ -58,6 +59,10 @@ public class MyContentProvider implements ITreeContentProvider {
     		ParallelPath myObject = (ParallelPath) parentElement;
             return myObject.getChildren().toArray();
         }
+    	if (parentElement instanceof UnassignedClasses) {
+    		UnassignedClasses myObject = (UnassignedClasses) parentElement;
+            return myObject.getChildren().toArray();
+        }
     	return new Object[0];
     }
 
@@ -85,6 +90,10 @@ public class MyContentProvider implements ITreeContentProvider {
         }
     	if (element instanceof ParallelPath) {
     		ParallelPath myObject = (ParallelPath) element;
+            return myObject.hasChildren();
+        }
+    	if (element instanceof UnassignedClasses) {
+    		UnassignedClasses myObject = (UnassignedClasses) element;
             return myObject.hasChildren();
         }
         return false;

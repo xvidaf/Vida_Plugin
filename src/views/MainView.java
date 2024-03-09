@@ -49,10 +49,12 @@ import actions.CreateMethod;
 import actions.CreateObject;
 import actions.CreateParallelPath;
 import actions.CreateProject;
+import actions.CreateUnassignedTracker;
 import actions.CreateVariable;
 import actions.RefreshTree;
 import actions.RefreshOpenedProjects;
 import actions.DeleteObject;
+import actions.DetectUnassignedClasses;
 import actions.ImportFromEA;
 import actions.OpenSettings;
 import actions.Properties;
@@ -71,6 +73,7 @@ import models.Project;
 import models.RootManager;
 import models.Settings;
 import models.UMLAction;
+import models.UnassignedClasses;
 
 public class MainView extends org.eclipse.ui.part.ViewPart {
 
@@ -323,7 +326,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 
 	private void fillContextMenu(IMenuManager menuManager, Action createProject, Action createObject,
 			Action refreshTree, Action removeObject, Action properties, Action createClass, Action createMethod,
-			Action importFromEa, Action createVariable, Action createFile, Action createAction, Action createForkJoin, Action createParallelPath, Action createADAction) {
+			Action importFromEa, Action createVariable, Action createFile, Action createAction, Action createForkJoin, Action createParallelPath, Action createADAction, Action createUnassignedAction, Action detectUnassignedClasses) {
 		IStructuredSelection selection = (IStructuredSelection) treeViewer.getSelection();
 		Object selectedElement = selection.getFirstElement();
 
@@ -332,6 +335,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createADAction);
 			newMenuManager.add(createObject);
+			newMenuManager.add(createUnassignedAction);
 			menuManager.add(importFromEa);
 		} else if (selectedElement instanceof ActivityDiagram || selectedElement instanceof ParallelPath) {
 			MenuManager newMenuManager = new MenuManager("New");
@@ -355,6 +359,8 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 			MenuManager newMenuManager = new MenuManager("New");
 			menuManager.add(newMenuManager);
 			newMenuManager.add(createParallelPath);
+		} else if (selectedElement instanceof UnassignedClasses) {
+			menuManager.add(detectUnassignedClasses);
 		}
 		menuManager.add(createProject);
 		if (selectedElement instanceof Element) {
@@ -385,13 +391,15 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 		CreateForkJoin createForkJoin = new CreateForkJoin(treeViewer);
 		CreateParallelPath createParallelAction = new CreateParallelPath(treeViewer);
 		CreateActivityDiagram createADAction = new CreateActivityDiagram(treeViewer);
+		CreateUnassignedTracker createUnassignedAction = new CreateUnassignedTracker(treeViewer);
+		DetectUnassignedClasses detectUnassignedClasses = new DetectUnassignedClasses(treeViewer);
 
 		menuManager.setRemoveAllWhenShown(true);
 
 		menuManager.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager menuManager) {
 				fillContextMenu(menuManager, createProject, createObject, refreshTree, removeObject, properties,
-						createClass, createMethod, importFromEa, createVariable, createFile, createAction, createForkJoin, createParallelAction, createADAction);
+						createClass, createMethod, importFromEa, createVariable, createFile, createAction, createForkJoin, createParallelAction, createADAction, createUnassignedAction, detectUnassignedClasses);
 			}
 		});
 	}

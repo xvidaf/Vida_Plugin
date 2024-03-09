@@ -54,6 +54,8 @@ public class MyLabelProvider extends LabelProvider {
         	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/forkjoin.png"))).createImage();
         } else if (element instanceof models.ParallelPath) {
         	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/path.png"))).createImage();
+        } else if (element instanceof models.UnassignedClasses) {
+        	return ImageDescriptor.createFromURL((this.getClass().getClassLoader().getResource("/icons/unassigned.png"))).createImage();
         }
         return super.getImage(element);
     }
