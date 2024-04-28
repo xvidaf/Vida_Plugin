@@ -140,7 +140,7 @@ public class MainView extends org.eclipse.ui.part.ViewPart {
 	    scrolledComposite.setExpandVertical(true);
 		
 		// Set the MainView as the control for the view
-		this.setPartName("My Custom View");
+		this.setPartName("ADOE");
 		// this.setTitleImage(Activator.getImageDescriptor("path/to/icon.png").createImage());
 
 		createContextMenu();

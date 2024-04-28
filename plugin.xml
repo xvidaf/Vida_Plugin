@@ -8,7 +8,7 @@
       <view
             class="views.MainView"
             id="Vida_Plugin.view1"
-            name="ADDASCO Expanded"
+            name="ADOE"
             restorable="true">
       </view>
    </extension>
